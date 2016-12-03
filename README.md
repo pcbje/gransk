@@ -2,7 +2,8 @@
 
 A tool for when you have a bunch of documents to figure out of. [Introduction to Gransk (YouTube)](https://youtu.be/RMBiL2NYQFU)
 
-[![Build Status](https://travis-ci.org/pcbje/gransk.svg?branch=master)](https://travis-ci.org/pcbje/gransk) [![Coverage Status](https://coveralls.io/repos/github/pcbje/gransk/badge.svg?branch=master)](https://coveralls.io/github/pcbje/gransk?branch=master)
+[![Build Status](https://travis-ci.org/pcbje/gransk.svg?branch=master)](https://travis-ci.org/pcbje/gransk) [![Documentation Status](https://readthedocs.org/projects/gransk/badge/?version=latest)](http://gransk.readthedocs.io/?badge=latest)
+ [![Coverage Status](https://coveralls.io/repos/github/pcbje/gransk/badge.svg?branch=master)](https://coveralls.io/github/pcbje/gransk?branch=master)
 
 Gransk is an open source tool that aims to be a Swiss army knife of document processing and analysis.
 Its primary objective is to quikly provide users with insight to their documents during investigations.
