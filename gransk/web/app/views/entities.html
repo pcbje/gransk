@@ -1,0 +1,97 @@
+<div>
+  <div class="row">
+    <div class="column column-300 left-bar">
+      <h4>Entities ({{counts.entities}})</h4>
+
+      <div class="pagenav" ng-show="entities.pages > 0">
+        <a href="" ng-click="change_entity_page(entities.page-1)"><< Prev</a>
+        Page {{entities.page+1}} of {{entities.pages+1}}
+        <a href="" ng-click="change_entity_page(entities.page+1)">Next >></a>
+      </div>
+
+      <div ng-show="lock_msg" class="lock-msg">
+        Locked on entity <a href="#/entities">release</a>
+      </div>
+
+      <div>
+        <div class="object-link" ng-repeat="entity in entities.hits track by $index">
+          <a href="" ng-class="{'active':$index===index}" ng-click="set_entity($index)">{{entity._source.value}} <span class="black">({{entity._source.type}})</span></a>
+        </div>
+      </div>
+
+      <navhint></navhint>
+
+      <div>
+        <h4>Type</h4>
+        <div class="box">
+          <div ng-repeat="(type, count) in entities.facets.entity_type">
+            <input type="checkbox" ng-model="entity_facets.type[type]" id="type-{{type}}"> <label for="type-{{type}}">{{type}} ({{count}})</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="column column-fill" ng-class="{'withquick':quicklook}" ng-show="entity">
+      <div id="item-header"><i class="fa fa-home" aria-hidden="true"></i> Home &nbsp; / &nbsp; Entities &nbsp; / &nbsp; {{entity._source.value}} ({{entity._source.type}})</div>
+
+      <div class="entrynav box">
+        <a href="" ng-click="set_show('documents')" ng-class="{'active':show=='documents'}">Documents ({{entity.documents.total}})</a>
+        <a href="" ng-click="set_show('related')" ng-class="{'active':show=='related','disabled':entity.related.data.length == 0}">Related ({{entity.related.data.length}})</a>
+        <a href="" ng-click="set_show('network')" ng-class="{'active':show=='network'}">Network</a>
+        <a href="" ng-click="set_show('raw')" ng-class="{'active':show=='raw'}">Raw</a>
+      </div>
+
+      <div id="entry">
+        <div ng-show="show=='related'">
+          <table width="100%" id="docmeta">
+            <tr>
+              <th width="50">Score</th>
+              <th>Entity</th>
+              <th># documents</th>
+            </tr>
+            <tr ng-repeat="rel in entity.related.data | orderBy:'score':true">
+              <td>{{rel.score.toFixed(2)}}</td>
+              <td style="white-space:nowrap"><a href="#/entities?lock={{rel.id}}">{{rel.ref}}</a> ({{rel.type}})</td>
+              <td width="100%">
+                <a href="" ng-click="show_shared=!show_shared">{{rel.shared.length}}</a>
+                <span ng-show="show_shared">:
+                  <span ng-repeat="doc in rel.shared | orderBy:'filename' track by $index"><span ng-if="$index>0"> | </span><a href="#/documents?lock={{doc.id}}">{{doc.filename}}</a></span>
+                </span>
+              </td>
+            </tr>
+          </table>
+
+          {{related.msg}}
+        </div>
+
+        <div ng-if="show=='raw'">
+          <div class="pre">{{json_stringify(entity._source)}}</div>
+        </div>
+
+        <div ng-show="show=='documents'">
+          <div class="pagenav" ng-show="entity.docpages > 0">
+            <a href="" ng-click="get_documents(entity.docpage-1)"><< Prev</a>
+            Page {{entity.docpage+1}} of {{entity.docpages+1}}
+            <a href="" ng-click="get_documents(entity.docpage+1)">Next >></a>
+          </div>
+
+          <table width="100%" id="docmeta">
+            <tr>
+              <th width="50">Document</th>
+              <th>Context</th>
+            </tr>
+            <tr ng-repeat="document in entity.documents.hits" class="highlight">
+              <td style="white-space:nowrap">
+                <a href="#/documents?lock={{document._source.doc_id}}">{{document._source.doc_filename}}</a>
+              </td>
+              <td class="searchable" ng-bind-html="highlight(document._source.entity_value, document._source.context) | to_trusted"></td>
+            </tr>
+          </table>
+        </div>
+
+        <div ng-if="show=='network'">
+          <entitynetwork entity="entity"></entitynetwork>
+        </div>
+    </div>
+  </div>
+</div>

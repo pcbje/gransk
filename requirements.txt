@@ -1,0 +1,15 @@
+chardet
+regex
+futures
+flask
+tqdm
+elasticsearch
+pyyaml
+https://github.com/pcbje/pycld2/tarball/master#egg=pycld2
+http://github.com/pcbje/polyglot/tarball/master#egg=polyglot
+numpy
+six
+
+virtualenv
+python-coveralls
+pytest-cov

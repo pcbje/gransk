@@ -1,0 +1,40 @@
+<div>
+  <div class="row">
+    <div id="item-header"><i class="fa fa-home" aria-hidden="true"></i> Home &nbsp; / &nbsp; Statistics</div>
+
+    <div style="padding:10px">
+      <div class="column column-fill-stats" id="mainstats">
+        <histogram histogram="statistics.histogram"></histogram>
+
+        <div style="clear:both"></div>
+
+        <pie data="data"  pid="key" ng-repeat="(key, data) in statistics.aggs" ng-if="key!=='raw_entity'"></pie>
+      </div>
+
+      <div class="column column-300">
+        <table width="100%" id="docmeta">
+          <tr>
+            <th>Type</th>
+            <th>Value</th>
+          </tr>
+          <tr ng-repeat="(key, value) in statistics.counts">
+            <td style="padding-left:20px">{{key}}</td>
+            <td width="100%">{{value}}</td>
+          </tr>
+        </table>
+
+        <h3>Top entities</h3>
+        <table width="100%" id="top-entities">
+          <tr>
+            <th>Count</th>
+            <th>Entity</th>
+          </tr>
+          <tr ng-repeat="entity in statistics.aggs.raw_entity.buckets">
+            <td>{{entity.doc_count}}</td>
+            <td><a href="#/entities?lock={{entity.key.entity_id}}">{{entity.key.value}}</a></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

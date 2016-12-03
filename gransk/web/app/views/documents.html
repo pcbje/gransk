@@ -1,0 +1,190 @@
+<div>
+  <div id="documents" class="column column-300 left-bar">
+    <h4>Documents ({{counts.documents}})</h4>
+
+    <div class="pagenav" ng-show="docs.pages">
+      <a href="" ng-click="change_document_page(docs.page-1)"><< <u>P</u>rev</a>
+      Page {{docs.page+1}} of {{docs.pages+1}}
+      <a href="" ng-click="change_document_page(docs.page+1)"><u>N</u>ext >></a>
+    </div>
+
+    <div ng-show="lock_msg" class="lock-msg">
+      Locked on document <a href="#/documents">release</a>
+    </div>
+
+    <div>
+      <div class="object-link" ng-repeat="(idx, _doc) in docs.hits track by $index">
+        <a ng-class="{'active':$index==index}" href="" ng-click="set_index($index)">{{_doc._source.filename}}</a>
+      </div>
+    </div>
+
+    <navhint></navhint>
+
+    <div>
+      <h4>File extension</h4>
+      <div class="box">
+        <div ng-repeat="(ext, count) in docs.facets.extension">
+          <input type="checkbox" ng-model="document_facets.ext[ext]" id="ext-{{ext}}"> <label for="ext-{{ext}}">{{ext}} ({{count}})</label>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4>Document type</h4>
+      <div class="box">
+        <div ng-repeat="(doctype, count) in docs.facets.doctype">
+          <input type="checkbox" ng-model="document_facets.doctype[doctype]" id="doctype-{{doctype}}"> <label for="doctype-{{doctype}}">{{doctype}} ({{count}})</label>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4>Tag</h4>
+      <div class="box">
+        <div ng-repeat="(tag, count) in docs.facets.tag">
+          <input type="checkbox" ng-model="document_facets.tag[tag]" id="tag-{{tag}}"> <label for="tag-{{tag}}">{{tag}} ({{count}})</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="column column-fill" ng-if="doc">
+    <div id="item-header">
+      <i class="fa fa-home" aria-hidden="true"></i> Home &nbsp; / &nbsp; Documents &nbsp; / &nbsp;
+      <a ng-if="doc._source.meta.copy" style="margin-right:5px;color:#666" title="Download original" target="_blank" href="/file?filename={{doc._source.meta.copy}}&amp;ext={{doc._source.ext}}&amp;mediatype={{doc._source.meta['Content-Type']}}"><i class="fa fa-download" aria-hidden="true"></i></a>
+      {{doc._source.filename}} ({{doc._source.tag}})
+    </div>
+
+    <div class="entrynav box">
+      <a ng-show="doc.highlight" href="" ng-click="set_show('hits')" ng-class="{'active':show=='hits'}">Hits ({{doc.highlight.text.length}})</a>
+      <a href="" ng-click="set_show('text')" ng-class="{'active':show=='text'}">Text</a>
+      <a href="" ng-click="set_show('meta')" ng-class="{'active':show=='meta'}">Meta ({{obj_size(doc._source.meta)}})</a>
+      <a href="" ng-click="set_show('entities')" ng-class="{'active':show=='entities','disabled':doc.entities.total == 0}">Entities ({{doc.entities.total}})</a>
+      <a href="" ng-click="set_show('children')" ng-if="doc.children.total>0" ng-class="{'active':show=='children','disabled':doc.children.total == 0}">Children ({{doc.children.total}})</a>
+      <a href="" ng-click="set_show('related')" ng-class="{'active':show=='related','disabled':doc.related.data.length == 0}">Related ({{doc.related.data.length}})</a>
+      <a href="" ng-click="set_show('picture')" ng-if="doc._source.meta.type=='picture'" ng-class="{'active':show=='picture'}">Picture</a>
+      <a href="" ng-click="set_show('raw')" ng-class="{'active':show=='raw'}">Raw</a>
+    </div>
+
+    <div id="entry">
+      <div ng-if="show=='hits'">
+        <div class="search highlight searchable" ng-repeat="highlight in doc.highlight.text track by $index" ng-bind-html="highlight | to_trusted"></div>
+      </div>
+
+      <div ng-if="show=='text'">
+        <div class="doctext searchable" ng-bind-html="doc.doctext | clean_whitespace | to_trusted"></div>
+      </div>
+
+      <div ng-if="show=='related'">
+        {{related.msg}}
+
+        <table width="100%" id="docmeta">
+          <tr>
+            <th width="100">Score</th>
+            <th style="white-space:nowrap">Other document</th>
+            <th>Shared entities</th>
+          </tr>
+          <tr ng-repeat="rel in doc.related.data | orderBy:'score':true">
+            <td>{{rel.score.toFixed(2)}}</td>
+            <td style="white-space:nowrap"><a href="#/documents?lock={{rel.id}}">{{rel.ref}}</a></td>
+            <td width="100%" ng-init="show_shared=false">
+              <a href="" ng-click="show_shared=!show_shared">{{rel.shared.length}}</a>
+              <span ng-show="show_shared">:
+                <span ng-repeat="entity in rel.shared | orderBy:'value' track by $index"><span ng-if="$index>0"> | </span><a href="#/entities?lock={{entity.id}}">{{entity.value}}</a></span-->
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div ng-if="show=='children'">
+        <div class="pagenav" ng-show="doc.child_pages > 0">
+          <a href="" ng-click="load_document_children(doc.child_page-1)"><< Prev</a>
+          Page {{doc.child_page+1}} of {{doc.child_pages+1}}
+          <a href="" ng-click="load_document_children(doc.child_page+1)">Next >></a>
+        </div>
+
+        <table width="100%" id="docmeta">
+          <tr>
+            <th width="100">Child &nbsp;<a href="" ng-click="submit_query('parent.id:' + doc._source.id)" style="color:#ccc"><i class="fa fa-search" aria-hidden="true"></i></a></th>
+          </tr>
+          <tr ng-repeat="child in doc.children.hits | orderBy:'_source.filename':true">
+            <td><a href="#/documents?lock={{child._source.id}}">{{child._source.filename}}</a></td>
+          </tr>
+        </table>
+      </div>
+
+      <div ng-if="show=='meta'">
+        <table width="100%" id="docmeta">
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+          <tr ng-hide="doc._source.parent.path==='root'">
+            <td>parent</td>
+            <td><a href="#/documents?lock={{doc._source.parent.id}}">{{doc._source.parent.filename}}</a></td>
+          </tr>
+          <tr ng-repeat="(key, value) in doc._source.meta" ng-if="value.trim() !== ''">
+            <td style="min-width:80px;white-space:nowrap;">
+              <div class="aggregateable" ng-class="{'active':aggregations[key]}">
+                <span style="display:inline-block;width:20px">
+                  <a href="" ng-click="aggregate_field(key)"><i class="fa fa-pie-chart" aria-hidden="true"></i></a>&nbsp;
+                </span>
+                {{key}}
+              </div>
+            </td>
+            <td width="100%" ng-class="{'pre':key==='directories'}" class="searchable">
+              <a ng-if="key==='url'" href="{{value}}" target="_blank">{{value}}</a>
+              <any ng-if="key!=='url'">{{prettify(key, value)}}</any>
+              <span class="meta-filter">
+                <a href="" ng-click="search_meta(key, value, ':', true)" ng-if="key!=='directories'" class="search-this"><i class="fa fa-search" aria-hidden="true"></i></a><a href="" ng-click="search_meta(key, value, ':')" ng-if="key!=='directories'" class="hidden search-this"><i class="fa fa-search-plus" aria-hidden="true"></i></a><a href="" ng-click="search_meta(key, value, '>')" ng-if="key!=='directories' && is_int(value)" class="hidden search-this"> > </a><a href="" ng-click="search_meta(key, value, '>=')" ng-if="key!=='directories' && is_int(value)" class="hidden search-this"> >= </a><a href="" ng-click="search_meta(key, value, '<=')" ng-if="key!=='directories' && is_int(value)" class="hidden search-this"> <= </a><a href="" ng-click="search_meta(key, value, '<')" ng-if="key!=='directories' && is_int(value)" class="hidden search-this"> < </a>
+              </span>
+
+              <table width="100%" class="aggregation" ng-show="aggregations[key]">
+                <tr ng-repeat="item in aggregations[key][key].meta.buckets">
+                  <td style="white-space:nowrap">
+                    {{item.key}}
+                    <a href="" ng-click="search_meta(key, item.key, ':')" class="search-this"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
+                  </td>
+                  <td>{{item.doc_count}}</td>
+                  <td style="width:100%">
+                    <div style="background-color:blue;width:{{(item.doc_count*100)/aggregations[key][key].doc_count}}%">&nbsp;</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div ng-if="show=='raw'">
+        <div class="pre">{{json_stringify(doc._source)}}</div>
+      </div>
+
+      <div ng-if="show=='entities'">
+        <div class="pagenav" ng-show="doc.entity_pages > 0">
+          <a href="" ng-click="load_document_entities(doc.entity_page-1)"><< Prev</a>
+          Page {{doc.entity_page + 1}} of {{doc.entity_pages + 1}}
+          <a href="" ng-click="load_document_entities(doc.entity_page+1)">Next >></a>
+        </div>
+
+        <table width="100%" id="docmeta">
+          <tr>
+            <th>Entity</th>
+            <th>Context</th>
+          </tr>
+          <tr ng-repeat="entity in doc.entities.hits" class="highlight">
+            <td style="white-space:nowrap"><a href="#/entities?lock={{entity._source.entity_id}}">{{entity._source.entity_value}}</a></td>
+            <td class="searchable" ng-bind-html="highlight(entity._source.entity_value, entity._source.context) | to_trusted"></td>
+          </tr>
+        </table>
+      </div>
+
+      <div ng-show="show=='picture'" class="picture-container">
+        <img class="picture" ng-src="/picture?name={{doc._source.meta.picture}}" />
+      </div>
+    </div>
+
+    <div style="margin-left:15px;font-size:0.9em;"><a style="color:#666;" href="" ng-click="delete_doc(doc._id, doc._source.id)">Delete</a></div>
+  </div>
+</div>

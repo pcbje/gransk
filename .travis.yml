@@ -1,0 +1,26 @@
+sudo: required
+dist: trusty
+
+language: python
+python:
+  - "3.4"
+  - "2.7"
+
+install:
+  - "sudo apt-get install --force-yes -y python-dev zlib1g-dev p7zip-full libicu-dev fontconfig rubygems-integration"
+  - "sudo gem install coveralls-lcov"
+  - "sudo apt-get remove --purge -y bzip2 libbz2-dev"
+  - "pip install -r utils/dfvfs-requirements.txt"
+  - "sudo apt-get install --force-yes -y bzip2 libbz2-dev"
+  - "pip install -r requirements.txt"
+  - "python setup.py install"
+  - "cp gransk/web/tests/package.json /opt && npm install --prefix=/opt /opt"
+
+script:
+  - "python run_tests.py"
+  - "py.test --cov gransk gransk"
+  - "/opt/node_modules/.bin/karma start gransk/web/tests/cover.conf.js"
+
+after_success:
+  - "cd gransk/web/app && coveralls-lcov -v -n ../../../coverage/web/lcov.info > ../../../coverage-web.json && cd ../../../"
+  - "coveralls --merge coverage-web.json"

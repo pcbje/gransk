@@ -1,0 +1,30 @@
+office
+- officedocument
+- application/pdf
+- application/msword
+- application/vnd.ms-word
+- application/vnd.ms-excel
+- application/vnd.ms-powerpoint
+
+archive
+- application/zip
+- application/gzip
+
+picture
+- image/jpeg
+- image/png
+- image/tiff
+- image/x-ms-bmp
+- image/bmp
+- image/x-raw
+
+text
+- text/plain
+
+web
+- text/html
+- application/xhtml
+
+
+communication
+- message/rfc822

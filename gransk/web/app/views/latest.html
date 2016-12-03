@@ -1,0 +1,48 @@
+<div>
+  <div id="documents" class="column column-300 left-bar" style="font-size:0.9em;white-space:nowrap;overflow-x:hidden;">
+    <div>
+      <h4>Tag</h4>
+      <div class="box">
+        <div class="tagitem" ng-repeat="item in full_facets.tag | orderBy:'key'" ng-class="{'active':actives[item.key],'filled':filled[item.key]}">
+          <input type="checkbox" ng-model="document_facets.tag[item.key]" id="tag-{{item.key}}" ng-click="rem_active(item.key)"> <label ng-click="rem_active(item.key)" for="tag-{{item.key}}">{{item.key}} ({{item.value}})</label>
+          <span ng-if="actives[item.key]">({{actives[item.key]}} new)</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4>Document type</h4>
+      <div class="box">
+        <div ng-repeat="item in full_facets.doctype | orderBy:'key'">
+          <input type="checkbox" ng-model="document_facets.doctype[item.key]" id="doctype-{{item.key}}"> <label for="doctype-{{item.key}}">{{item.key}} ({{item.value}})</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="column column-fill">
+    <div id="item-header"><i class="fa fa-home" aria-hidden="true"></i> Home &nbsp; / &nbsp; Latest documents</div>
+
+    <div style="padding:10px">
+      <table width="100%" id="top-entities">
+        <tr>
+          <th>Added</th>
+          <th>Filename</th>
+          <th>Tag</th>
+          <th>Type</th>
+          <th>URL</th>
+        </tr>
+        <tr ng-repeat="doc in latest.hits">
+          <td style="white-space:nowrap;">{{prettify('time', doc._source.meta.added)}}</td>
+          <td style="white-space:nowrap;width:40%;padding-right:20px;">
+            <a ng-if="doc._source.meta.copy" style="margin-right:5px;color:#666" title="Download original" target="_blank" href="/file?filename={{doc._source.meta.copy}}&amp;ext={{doc._source.ext}}&amp;mediatype={{doc._source.meta['Content-Type']}}"><i class="fa fa-download" aria-hidden="true"></i></a>
+            <a href="#/documents?lock={{doc._source.id}}" target="_blank">{{doc._source.filename}}</a>
+          </td>
+          <td style="white-space:nowrap;">{{doc._source.tag}}</td>
+          <td style="white-space:nowrap;">{{doc._source.doctype}}</td>
+          <td style="white-space:nowrap;width:40%"><a href="{{doc._source.meta.url}}" target="_blank">{{doc._source.meta.url}}</a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

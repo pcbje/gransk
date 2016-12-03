@@ -1,0 +1,12 @@
+tika:
+  image: logicalspark/docker-tikaserver
+  cpu_shares: 2
+  ports:
+    - "9998:9998"
+
+elasticsearch:
+  image: elasticsearch:2.3.5
+  cpu_shares: 2
+  command: elasticsearch -Des.http.cors.enabled=true -Dhttp.cors.allow-origin=*
+  ports:
+    - "9200:9200"

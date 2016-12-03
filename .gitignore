@@ -1,0 +1,16 @@
+*.pyc
+.DS_Store
+*.egg-info
+.cache
+.coverage
+local_data
+coverage
+*.box
+build
+dist
+node_modules
+coverage-web.json
+pyenv
+pyenv*
+__pycache__
+mock-travis.sh

@@ -1,0 +1,55 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+import os
+import logging
+
+from werkzeug import secure_filename
+
+import gransk.core.abstract_subscriber as abstract_subscriber
+import gransk.core.helper as helper
+
+
+LOGGER = logging.getLogger(__name__)
+
+
+class Subscriber(abstract_subscriber.Subscriber):
+  """
+  A class for writing extracted tect to file. Useful when debugging or
+  implementing custom processing steps.
+  """
+  CONSUMES = [helper.FINISH_DOCUMENT]
+
+  def setup(self, config):
+    """
+    Determine target directory.
+
+    :param doc: Document object.
+    :type doc: ``gransk.core.document.Document``
+    """
+    self.root = os.path.join(config[helper.DATA_ROOT], 'text')
+    if not os.path.exists(self.root):
+      try:
+        os.makedirs(self.root)
+      except Exception as err:
+        LOGGER.debug("could not create dir %s: %s" % (self.root, err))
+
+  def consume(self, doc, payload):
+    """
+    Write text to target directory, using a combination of filename and file
+    ID as path.
+
+    :param doc: Document object.
+    :param payload: File pointer beloning to document.
+    :type doc: ``gransk.core.document.Document``
+    :type payload: ``file``
+    """
+    new_filename = '%s-%s' % (
+        doc.docid[0:8], secure_filename(os.path.basename(doc.path)))
+
+    new_path = os.path.join(self.root, new_filename)
+
+    with open(new_path.encode('utf-8'), 'wb') as out:
+      out.write(doc.text.encode('utf-8'))
+
+    doc.meta[u'text_file'] = new_path

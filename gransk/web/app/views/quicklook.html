@@ -1,0 +1,25 @@
+<div id="quicklook" class="selection-ignore">
+  <div class="item-header">
+    <i class="fa fa-search" aria-hidden="true"></i> "{{quicklook}}"
+    <div style="float:right"><a href="" ng-click="active=false"><i class="fa fa-times" aria-hidden="true"></i></a></div>
+    <div style="clear:both"></div>
+  </div>
+
+  <div style="padding: 5px">
+    <h4>Documents ({{documents.total}})</h4>
+    <div>
+      <div class="object-link" ng-repeat="doc in documents.hits">
+        <a ng-class="{'active':lock==doc._source.id}" href="#/documents?lock={{doc._source.id}}&amp;q=*{{quicklook.toLowerCase()}}*">{{doc._source.filename}}</a>
+      </div>
+    </div>
+
+    <div ng-show="entities.total>0">
+      <h4>Entities ({{entities.total}})</h4>
+      <div>
+        <div class="object-link" ng-repeat="entity in entities.hits">
+          <a ng-class="{'active':lock==entity._source.entity_id}" href="#/entities?lock={{entity._source.entity_id}}&amp;q=*{{quicklook.toLowerCase()}}*">{{entity._source.value}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+pip >= 7.0.0
+IPython >= 1.2.1
+construct >= 2.5.2,<= 2.5.3
+dfvfs >= 20160803
+libbde-python >= 20140531
+libewf-python >= 20160802
+dfdatetime >= 20160319
+libfsntfs-python >= 20151130
+libfvde-python >= 20160719
+libfwnt-python >= 20160418
+libsigscan-python >= 20150627
+libsmdev-python >= 20140529
+libsmraw-python >= 20140612
+libvhdi-python >= 20131210
+libvmdk-python >= 20140421
+libvshadow-python >= 20160109
+libvslvm-python >= 20160109
+pycrypto >= 2.6.0
+pytsk3 >= 20160721
+six >= 1.1.0

@@ -1,0 +1,63 @@
+# windows
+/RECOVERY
+/ASUSLog
+/boot
+/DisableS3S4
+/efi
+/Recovery
+/$Extend
+/ASUS.DAT
+/Boot
+/eSupport
+/Program Files
+/Program Files (x86)
+/Windows
+/$AttrDef
+/$Windows
+/Intel
+/MSOCache
+/System Volume Information
+/ProgramData
+/PerfLogs
+
+# OSX
+/$ExtentsFile
+/.
+/Applications
+/Library
+/private
+/System
+/usr
+/^^^^HFS+ Private Data
+/sbin
+/Network
+/bin
+/etc
+/home
+/cores
+/dev
+/net
+/tmp
+/usr
+/var
+
+# Linux
+/bin
+/boot
+/cdrom
+/dev
+/etc
+/lib
+/lib32
+/lib64
+/libx32
+/lost+found
+/opt
+/proc
+/run
+/sbin
+/srv
+/sys
+/tmp
+/usr
+/var
