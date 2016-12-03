@@ -14,7 +14,7 @@ content extraction, Elasticsearch for data indexing, and dfVFS to unpack disk im
 
 ##### Using [VirtualBox](https://www.virtualbox.org/wiki/Downloads):
 
-1. Download Gransk VM: https://drive.google.com/uc?export=download&id=0B6iPjQOwe4MKSzl3MEdrajBZdGM
+1. Download Gransk VM: https://drive.google.com/uc?export=download&id=0B6iPjQOwe4MKOVhma2VhWmpWaEE
 2. Open VirtualBox and click "File" -> "Import appliance". Choose downloaded VM.
 3. Double click on the imported machine. (Hold shift to run in background)
 4. After a couple of seconds. open a web browser and go to [http://localhost:8084](http://localhost:8084)
