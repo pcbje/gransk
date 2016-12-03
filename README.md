@@ -1,6 +1,6 @@
 # Gransk - Document processing for investigations
 
-A tool for when you have a bunch of documents to figure out of. [Introduction to Gransk (YouTube)](https://youtu.be/RMBiL2NYQFU)
+A tool for when you have a bunch of documents to figure out of. [Introduction to Gransk (YouTube)](https://www.youtube.com/watch?v=hkfLQFRShJ8)
 
 [![Build Status](https://travis-ci.org/pcbje/gransk.svg?branch=master)](https://travis-ci.org/pcbje/gransk) [![Documentation Status](https://readthedocs.org/projects/gransk/badge/?version=latest)](http://gransk.readthedocs.io/?badge=latest)
  [![Coverage Status](https://coveralls.io/repos/github/pcbje/gransk/badge.svg?branch=master)](https://coveralls.io/github/pcbje/gransk?branch=master)
