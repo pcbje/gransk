@@ -22,7 +22,7 @@ content extraction, Elasticsearch for data indexing, and dfVFS to unpack disk im
 ##### Using [Docker](https://www.docker.com):
 
 ```
-curl -o docker-quickstart.sh -X GET https://github.com/pcbje/gransk/raw/master/docker-quickstart.sh
+curl -o docker-quickstart.sh -X GET https://raw.githubusercontent.com/pcbje/gransk/master/docker-quickstart.sh
 sh ./docker-quickstart.sh
 ```
 
