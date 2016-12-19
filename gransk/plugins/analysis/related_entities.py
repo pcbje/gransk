@@ -23,7 +23,7 @@ class Subscriber(abstract_related.Subscriber):
     """
     entities = doc.entities.get_all()
 
-    doc = json.dumps({'id': doc.docid, 'filename': os.path.basename(doc.path)})
+    doc = json.dumps({'id': doc.docid, 'filename': os.path.basename(doc.path)}, sort_keys=True)
 
     for _, entity in entities:
       key = entity['entity_id'].lower()
