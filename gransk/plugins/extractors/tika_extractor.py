@@ -29,6 +29,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     """
     self.config = config
     self.max_size = config.get(helper.TIKA_MAX_SIZE, 1024 * 1024 * 64)
+    self.ocr_languages = config.get(helper.OCR_LANGUAGES)
 
   def consume(self, doc, payload):
     """
@@ -43,13 +44,18 @@ class Subscriber(abstract_subscriber.Subscriber):
       return
 
     filename = os.path.basename(doc.path).encode('utf-8')
+    content_type = doc.meta['Content-Type']
 
-    files = {
-        'Content-Disposition': 'attachment; filename=%s' % filename
+    headers = {
+        'Content-Disposition': 'attachment; filename=%s' % filename,
+        'Content-type': content_type,
     }
 
+    if self.ocr_languages:
+        headers['X-Tika-OCRLanguage'] = self.ocr_languages
+
     connection = self.config[helper.INJECTOR].get_http_connection()
-    connection.request('PUT', '/tika', payload.read(), files)
+    connection.request('PUT', '/tika', payload.read(), headers)
 
     doc.set_size(payload.tell())
 
