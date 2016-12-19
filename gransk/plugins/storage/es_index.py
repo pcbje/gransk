@@ -83,7 +83,7 @@ class Subscriber(abstract_subscriber.Subscriber):
             "analysis": {
                 "analyzer": {
                     "lowercase_keyword": {
-                        "type:": "custom",
+                        "type": "custom",
                         "filter": ["lowercase"],
                         "tokenizer": "keyword"
                     }
