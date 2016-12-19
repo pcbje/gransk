@@ -42,6 +42,11 @@ class Subscriber(abstract_subscriber.Subscriber):
       except Exception:
         self.buckets = {}
 
+    config_related = config.get(helper.RELATED, {}).get(self.NAME, {})
+    self.min_score = config_related.get(helper.MIN_SCORE, 0.4)
+    self.min_shared = config_related.get(helper.MIN_SHARED, 5)
+    self.max_results = config_related.get(helper.MAX_RESULTS, 100)
+
   def save_all(self):
     file_dir = os.path.dirname(self.path)
 
@@ -88,7 +93,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     """
     raise NotImplementedError('Please implement this method!')
 
-  def get_related_to(self, _id, min_score=0.4, min_shared=5, max_results=100):
+  def get_related_to(self, _id, min_score=None, min_shared=None, max_results=None):
     """
     Get objects related to the given ID, based on:
       - How many entities they have in common (related documents)
@@ -103,6 +108,15 @@ class Subscriber(abstract_subscriber.Subscriber):
     :type min_shared: ``int``
     :type max_results: ``int``
     """
+    if min_score is None:
+      min_score = self.min_score
+
+    if min_shared is None:
+      min_shared = self.min_shared
+
+    if max_results is None:
+      max_results = self.max_results
+
     _id = _id.lower()
 
     if _id not in self.buckets:
