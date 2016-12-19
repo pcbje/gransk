@@ -5,8 +5,10 @@ import time
 import json
 import hashlib
 import logging
+import traceback
 import yaml
 import os
+import sys
 import shutil
 
 import six.moves.http_client
