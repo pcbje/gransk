@@ -78,6 +78,7 @@ class Subscriber(abstract_subscriber.Subscriber):
         new_doc = document.get_document(path, parent=doc)
         new_doc.tag = tag
         with open(path) as file_object:
+          self.produce(helper.EXTRACT_META, new_doc, file_object)
           self.produce(helper.PROCESS_FILE, new_doc, file_object)
           doc.children += 1
 
