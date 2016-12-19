@@ -44,7 +44,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     entity_id = entity_id.lower()
 
     if entity_id not in self.related_entities.buckets:
-      return []
+      return {}
 
     network = defaultdict(int)
     nodes = {}
