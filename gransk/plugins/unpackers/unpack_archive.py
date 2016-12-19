@@ -29,11 +29,6 @@ class Subscriber(abstract_subscriber.Subscriber):
     self.config = config
     self.tmp_root = os.path.join(config[helper.DATA_ROOT], 'archives', '.tmp')
     self.wid = config[helper.WORKER_ID]
-    if not os.path.exists(self.tmp_root):
-      try:
-        os.makedirs(self.tmp_root)
-      except OSError as err:
-        print (err)
     self.password = 'X'
 
   def consume(self, doc, payload):
@@ -56,12 +51,13 @@ class Subscriber(abstract_subscriber.Subscriber):
     unpack_to = os.path.join(
         self.config[helper.DATA_ROOT], u'archives', unique_filename)
 
-    try:
+    if not os.path.exists(unpack_to):
       os.makedirs(unpack_to)
-    except OSError:
-      pass
 
-    tmp_path = os.path.join(self.tmp_root, '%s.%s' % (self.wid, doc.ext))
+    tmp_path = os.path.join(self.tmp_root, '%s-%s.%s' % (self.wid, doc.docid[0:8], doc.ext))
+
+    if not os.path.exists(self.tmp_root):
+      os.makedirs(self.tmp_root)
 
     with open(tmp_path, 'wb') as out:
       payload.seek(0)
@@ -80,10 +76,13 @@ class Subscriber(abstract_subscriber.Subscriber):
       for filename in filenames:
         path = os.path.join(folder, filename)
         new_doc = document.get_document(path, parent=doc)
-        new_doc.tag = doc.tag
+        new_doc.tag = tag
         with open(path) as file_object:
           self.produce(helper.PROCESS_FILE, new_doc, file_object)
           doc.children += 1
+
+    if os.path.exists(tmp_path):
+      os.remove(tmp_path)
 
     shutil.rmtree(unpack_to)
 

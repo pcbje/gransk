@@ -114,7 +114,8 @@ class API(object):
   def clear_all(self):
     """Clear all processed data."""
     try:
-        shutil.rmtree(self.config[helper.DATA_ROOT])
+        if os.path.exists(self.config[helper.DATA_ROOT]):
+          shutil.rmtree(self.config[helper.DATA_ROOT])
         os.makedirs(self.config[helper.DATA_ROOT])
         os.makedirs(os.path.join(self.config[helper.DATA_ROOT], 'pictures'))
         os.makedirs(os.path.join(self.config[helper.DATA_ROOT], 'files'))
