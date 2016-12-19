@@ -46,6 +46,9 @@ class Subscriber(abstract_subscriber.Subscriber):
     new_filename = '%s-%s' % (
         doc.docid[0:8], secure_filename(os.path.basename(doc.path)))
 
+    if not os.path.exists(self.root):
+      os.makedirs(self.root)
+
     new_path = os.path.join(self.root, new_filename)
 
     with open(new_path.encode('utf-8'), 'wb') as out:

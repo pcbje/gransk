@@ -5,8 +5,10 @@ import time
 import json
 import hashlib
 import logging
+import traceback
 import yaml
 import os
+import sys
 import shutil
 
 import six.moves.http_client
@@ -114,7 +116,8 @@ class API(object):
   def clear_all(self):
     """Clear all processed data."""
     try:
-        shutil.rmtree(self.config[helper.DATA_ROOT])
+        if os.path.exists(self.config[helper.DATA_ROOT]):
+          shutil.rmtree(self.config[helper.DATA_ROOT])
         os.makedirs(self.config[helper.DATA_ROOT])
         os.makedirs(os.path.join(self.config[helper.DATA_ROOT], 'pictures'))
         os.makedirs(os.path.join(self.config[helper.DATA_ROOT], 'files'))

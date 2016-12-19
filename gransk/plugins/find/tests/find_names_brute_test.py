@@ -24,7 +24,7 @@ class FindNamesBruteTest(unittest.TestCase):
     doc.text = u'Dette  er Tom Martin.'
     find_names.consume(doc, None)
     expected = [(10, {
-        u'entity_id': u'Tom_Martin',
+        u'entity_id': u'tom_martin',
         u'type': u'per',
         u'value': u'Tom Martin'
     })]
@@ -44,7 +44,7 @@ Computers assigned to Jo Smith from November 13, 2009 to December 12, 2009.
     doc.text = text
     find_names.consume(doc, None)
     expected = [(62, {
-        u'entity_id': u'Jo_Smith',
+        u'entity_id': u'jo_smith',
         u'type': u'per',
         u'value': u'Jo Smith'
     })]

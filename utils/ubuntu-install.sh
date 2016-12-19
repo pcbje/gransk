@@ -58,7 +58,7 @@ echo "  plugins: /data/plugins" >> /elasticsearch/config/elasticsearch.yml
 echo "  work: /data/work" >> /elasticsearch/config/elasticsearch.yml
 
 # Start services on boot
-(crontab -l 2>/dev/null; echo "@reboot /elasticsearch/bin/elasticsearch -Des.http.cors.enabled=true -Dhttp.cors.allow-origin=* > /var/log/es.log 2>&1 &") | crontab -
+(crontab -l 2>/dev/null || true; echo "@reboot /elasticsearch/bin/elasticsearch -Des.http.cors.enabled=true -Dhttp.cors.allow-origin=* > /var/log/es.log 2>&1 &") | crontab -
 (crontab -l 2>/dev/null; echo "@reboot java -jar /tika-server-1.14.jar -h 0.0.0.0 > /var/log/tika.log 2>&1 &") | crontab -
 (crontab -l 2>/dev/null; echo "@reboot sleep 10 && python -m gransk.boot.ui --host=0.0.0.0 > /var/log/gransk.log 2>&1 &") | crontab -
 

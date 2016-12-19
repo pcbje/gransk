@@ -26,11 +26,11 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     for entity_type, pattern_conf in config.get(helper.ENTITIES, {}).items():
       patterns.append(
-          u'(?P<{}>{})'.format(entity_type, pattern_conf[helper.PATTERN]))
+          u'\\b(?P<{}>{})\\b'.format(entity_type, pattern_conf[helper.PATTERN]))
 
     self.pattern = regex.compile(
-        u'(?:\s|^|[^a-z0-9]){}(?:\s|$|[^a-z0-9])'.format('|'.join(patterns)),
-        regex.I)
+        u'|'.join(patterns),
+        regex.I | regex.U)
 
   def consume(self, doc, _):
     """

@@ -109,7 +109,7 @@ class UiTest(unittest.TestCase):
     with open(os.path.join(picture_root, 'test.jpg'), 'w') as out:
       out.write(u'abcde')
 
-    rv = self.app.get('/picture?name=test.jpg')
+    rv = self.app.get('/picture?name=test.jpg&mediatype=image/jpeg')
 
     expected = b'abcde'
     actual = rv.data

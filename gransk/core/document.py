@@ -31,7 +31,7 @@ class Entities(object):
     self.obj[offset] = {
         'type': entity_type,
         'value': entity_value,
-        'entity_id': re.sub('\s', '_', entity_value)
+        'entity_id': re.sub(r'\s', '_', entity_value).lower()
     }
 
   def get_all(self):

@@ -267,7 +267,7 @@ modules.directive('entitynetwork', function($http) {
 
         seed = scope.entity._source.entity_id;
         $http.get('/network?hops=' + scope.hops + '&entity_id=' + scope.entity._source.entity_id).then(function(network) {
-          if (network.data.seed && network.data.seed.toLowerCase() !== seed.toLowerCase()) return;
+          if (network.data.seed === undefined || network.data.seed.toLowerCase() !== seed.toLowerCase()) return;
 
           scope.network = network;
           graph.clear();

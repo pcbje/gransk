@@ -66,6 +66,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       file_object = None
       try:
         file_object = entry.GetFileObject(data_stream_name=data_stream)
+        self.produce(helper.EXTRACT_META, newdoc, file_object)
         self.produce(helper.PROCESS_FILE, newdoc, file_object)
         doc.children += 1
       except IOError as err:

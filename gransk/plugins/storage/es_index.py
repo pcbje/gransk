@@ -3,10 +3,10 @@
 from __future__ import absolute_import
 import logging
 import threading
-import time
 import re
 import json
 import os
+from six.moves import queue
 
 import gransk.core.abstract_subscriber as abstract_subscriber
 import gransk.core.helper as helper
@@ -34,44 +34,46 @@ class Subscriber(abstract_subscriber.Subscriber):
     """
     self.config = config
     self.context_size = config.get(helper.CONTEXT_SIZE, 120)
-    self.elastic_bulk = []
+    self.elastic_bulk = queue.Queue()
     self.elastic = self.config[helper.INJECTOR].get_elasticsearch()
     self.helper = self.config[helper.INJECTOR].get_elasticsearch_helper()
     self.create_mapping()
 
-    self.last_commit = 0
-    self.comitted = False
-
-    thread = threading.Thread(target=self._time_commit, args=())
+    thread = threading.Thread(target=self._commit, args=())
     thread.daemon = True
     thread.start()
-
-  def _maybe_commit(self):
-    if len(self.elastic_bulk) < 200:
-      return
-
-    self._commit()
+    self.thread = thread
 
   def _commit(self):
-    self.last_commit = int(time.time())
-    try:
-      self.comitted = True
-      tmp = self.elastic_bulk
-      self.elastic_bulk = []
-      self.helper.bulk(self.elastic, tmp)
-    except Exception as err:
-      LOGGER.error('es index error: %s' % err)
+    bulk = []
+    stop = False
 
-  def _time_commit(self):
     while True:
-      if not self.comitted:
-        self._commit()
-      self.comitted = False
-      time.sleep(1)
+      while len(bulk) < 50 and not stop:
+        try:
+          obj = self.elastic_bulk.get(timeout=3)
+        except queue.Empty:
+          break
+
+        if obj is None:
+          stop = True
+        else:
+          bulk.append(obj)
+
+      if bulk:
+        try:
+          self.helper.bulk(self.elastic, bulk)
+        except Exception as err:
+          LOGGER.error('es index error: %s' % err)
+        bulk = []
+
+      if stop:
+        break
 
   def stop(self):
     """Commit current remaning documents."""
-    self._commit()
+    self.elastic_bulk.put(None)
+    self.thread.join()
 
   def create_mapping(self):
     """Create index mappig in Elasticsearch cluster."""
@@ -81,7 +83,7 @@ class Subscriber(abstract_subscriber.Subscriber):
             "analysis": {
                 "analyzer": {
                     "lowercase_keyword": {
-                        "type:": "custom",
+                        "type": "custom",
                         "filter": ["lowercase"],
                         "tokenizer": "keyword"
                     }
@@ -164,7 +166,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     obj['_source'][u'tag'] = tag
 
-    self.elastic_bulk.append(obj)
+    self.elastic_bulk.put(obj)
 
     cache = {}
 
@@ -178,7 +180,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
       cache[entity_id] = True
 
-      self.elastic_bulk.append({
+      self.elastic_bulk.put({
           u"_op_type": u"index",
           u"_index": u'gransk',
           u"_type": u'entity',
@@ -197,7 +199,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       context = doc.text[ctx_start:ctx_end]
       context = re.sub('\s+', ' ', context)
 
-      self.elastic_bulk.append({
+      self.elastic_bulk.put({
           u"_op_type": u"index",
           u"_index": u'gransk',
           u"_type": u'in_doc',
@@ -214,5 +216,3 @@ class Subscriber(abstract_subscriber.Subscriber):
           u'_id': '%s\x00%s\x00%s\x00%s' % (
               doc.docid[-12::], entity_value, entity_type, start)
       })
-
-    self._maybe_commit()

@@ -30,7 +30,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     :type config: ``dict``
     """
     self.path = os.path.join(
-        config[helper.DATA_ROOT], '%s_buckets-%s.json' %
+        config[helper.DATA_ROOT], '%s_buckets-%s.pickle' %
         (self.NAME, config[helper.WORKER_ID]))
 
     with open(self.path, 'a') as _:
@@ -42,6 +42,15 @@ class Subscriber(abstract_subscriber.Subscriber):
       except Exception:
         self.buckets = {}
 
+  def save_all(self):
+    file_dir = os.path.dirname(self.path)
+
+    if not os.path.exists(file_dir):
+      os.makedirs(file_dir)
+
+    with open(self.path, 'wb') as out:
+      pickle.dump(self.buckets, out)
+
   def load_all(self, config):
     """
     Load all existing data.
@@ -52,7 +61,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     self.buckets = {}
 
     for path in glob.glob(os.path.join(
-            config[helper.DATA_ROOT], '%s_buckets-*.json' % self.NAME)):
+            config[helper.DATA_ROOT], '%s_buckets-*.pickle' % self.NAME)):
       with open(path, 'rb') as inp:
         try:
           for key, value in pickle.load(inp).items():
@@ -66,9 +75,7 @@ class Subscriber(abstract_subscriber.Subscriber):
   def stop(self):
     """Write data to file."""
     logging.debug('flushing %s.' % self.NAME)
-
-    with open(self.path, 'wb') as out:
-      pickle.dump(self.buckets, out)
+    self.save_all()
 
   def consume(self, doc, payload):
     """
