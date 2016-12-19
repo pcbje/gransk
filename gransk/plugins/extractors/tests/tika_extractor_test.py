@@ -30,8 +30,11 @@ class TikaExtractorTest(unittest.TestCase):
 
     with open('config.yml') as inp:
       config = yaml.load(inp.read())
-      config[helper.INJECTOR] = test_helper.MockInjector(response_text=expected)
-      extractor.setup(config)
+
+    config[helper.DATA_ROOT] = 'local_data'
+    config[helper.WORKER_ID] = 1
+    config[helper.INJECTOR] = test_helper.MockInjector(response_text=expected)
+    extractor.setup(config)
 
     path = self.get_test_file('document.pdf')
 
