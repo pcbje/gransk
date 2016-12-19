@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import re
 import os
 import json
+import subprocess
 
 
 import gransk.core.helper as helper
@@ -68,6 +69,18 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     return result
 
+  def __get_mime_type(self, payload):
+    payload.seek(0)
+    cmd = ('file', '--brief', '--mime-type', '-')
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, _ = proc.communicate(payload.read())
+    payload.seek(0)
+
+    if proc.returncode != 0:
+      return None
+
+    return out.strip().decode("utf-8")
+
   def consume(self, doc, payload):
     """
     Upload document to Apache Tika and parse results.
@@ -86,11 +99,14 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     try:
       meta = self.__extract_metadata(doc, payload)
-      application_type = meta.get(u'Content-Type')
-      for match in self.typepattern.finditer(application_type):
-        doc.set_type(match.lastgroup)
     except Exception as err:
       doc.meta['meta_error'] = six.text_type(err)
+
+    if 'Content-Type' not in meta:
+      meta['Content-Type'] = self.__get_mime_type(payload)
+
+    for match in self.typepattern.finditer(meta['Content-Type']):
+      doc.set_type(match.lastgroup)
 
     for key, value in meta.items():
       doc.meta[key.replace('.', '_').replace(':', '_')] = value
