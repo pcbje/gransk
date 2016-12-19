@@ -90,6 +90,7 @@ ext_types:
     - bmp
     - png
     - tiff
+    - tif
 
   document:
     - pdf
