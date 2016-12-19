@@ -242,7 +242,8 @@ describe("entities", function() {
       scope = _root_scope.$new();
       $compile = _$compile_;
       $httpBackend = $injector.get('$httpBackend');
-      $httpBackend.when('GET', '/network?hops=1&entity_id=1234').respond({
+      $httpBackend.when('GET', '/network?hops=1&entity_id=a').respond({
+        seed: 'a',
         nodes: {
           'a': {
             value: 'a'
@@ -263,10 +264,10 @@ describe("entities", function() {
     });
 
     it('should compile entity network', function() {
-      $httpBackend.expectGET('/network?hops=1&entity_id=1234');
+      $httpBackend.expectGET('/network?hops=1&entity_id=a');
       scope.entity = {
         _source: {
-          entity_id: 1234
+          entity_id: 'a'
         }
       };
       var element = $compile('<entitynetwork entity="entity"></entitynetwork>')(scope);
