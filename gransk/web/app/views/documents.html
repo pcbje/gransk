@@ -181,7 +181,7 @@
       </div>
 
       <div ng-show="show=='picture'" class="picture-container">
-        <img class="picture" ng-src="/picture?name={{doc._source.meta.picture}}" />
+        <img class="picture" ng-src="/picture?name={{doc._source.meta.picture}}&mediatype={{doc._source.meta['Content-Type']}}" />
       </div>
     </div>
 

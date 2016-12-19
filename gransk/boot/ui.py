@@ -10,7 +10,7 @@ import shutil
 import time
 import requests
 
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, render_template, request, abort
 from werkzeug import secure_filename
 import yaml
 
@@ -105,9 +105,13 @@ def get_file():
   ext = secure_filename(request.args['ext'])
   mediatype = request.args['mediatype']
 
-  root = os.path.join(_globals['gransk'].config[helper.DATA_ROOT], u'files')
+  root = os.path.join(_globals['gransk'].config[helper.DATA_ROOT], 'files')
+  file_path = os.path.join(root, ext, filename)
 
-  with open(os.path.join(root, ext, filename), 'rb') as inp:
+  if not os.path.exists(file_path):
+    abort(404)
+
+  with open(file_path, 'rb') as inp:
     return Response(inp.read(), mimetype=mediatype, status=200)
 
 @app.route('/search')
@@ -127,9 +131,16 @@ def search():
 def picture():
   """Get document content as picture."""
   name = secure_filename(request.args['name'])
+  mediatype = request.args['mediatype']
 
-  with open(os.path.join(_globals['config'][helper.DATA_ROOT], 'pictures', name), 'rb') as inp:
-    return Response(inp.read(), status=200)
+  root = os.path.join(_globals['gransk'].config[helper.DATA_ROOT], 'pictures')
+  image_path = os.path.join(root, name)
+
+  if not os.path.exists(image_path):
+    abort(404)
+
+  with open(image_path, 'rb') as fp:
+    return Response(fp.read(), mimetype=mediatype, status=200)
 
 
 @app.route('/related', methods=[u'GET'])
