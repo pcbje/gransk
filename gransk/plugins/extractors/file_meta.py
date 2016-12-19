@@ -56,8 +56,9 @@ class Subscriber(abstract_subscriber.Subscriber):
         'Content-Disposition': 'attachment; filename=%s' % filename
     }
 
+    tika_url = self.config.get(helper.TIKA_META)
+    connection = self.config[helper.INJECTOR].get_http_connection(tika_url)
     payload.seek(0)
-    connection = self.config[helper.INJECTOR].get_http_connection()
     connection.request('PUT', '/meta', payload.read(), files)
     payload.seek(0)
 
