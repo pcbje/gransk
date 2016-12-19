@@ -26,7 +26,7 @@ class FindNamesNerTest(unittest.TestCase):
     doc.text = u'Dette  er Hans Petter.'
     find_names.consume(doc, None)
     expected = [(10, {
-        'entity_id': u'Hans_Petter',
+        'entity_id': u'hans_petter',
         'type': u'per',
         'value': u'Hans Petter'
     })]
