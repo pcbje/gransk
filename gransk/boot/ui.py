@@ -173,6 +173,17 @@ def entity_network():
   return Response(json.dumps(result), status=200, mimetype='application/json')
 
 
+@app.route('/saveall', methods=[u'GET'])
+def saveall():
+  """Save all related data to the disk."""
+
+  for service in ('related_entities', 'related_documents'):
+    if _globals['gransk'].pipeline.get_service(service):
+      _globals['gransk'].pipeline.get_service(service).save_all()
+
+  return Response('ok')
+
+
 @app.route('/', methods=[u'GET'])
 def home():
   """Get main page."""
