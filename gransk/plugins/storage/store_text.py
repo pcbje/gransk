@@ -5,6 +5,7 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 import logging
+import io
 
 from werkzeug import secure_filename
 
@@ -54,7 +55,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     new_path = os.path.join(self.root, new_filename)
 
-    with open(new_path, 'wb') as out:
+    with io.open(new_path, 'w', encoding='utf-8') as out:
       out.write(doc.text)
 
     doc.meta['text_file'] = new_path

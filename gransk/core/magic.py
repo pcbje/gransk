@@ -19,7 +19,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
   def setup(self, _):
     """Compile file headers for all magic extractors into a regex pattern."""
-    self.pattern = re.compile('|'.join(list(self.pipeline.magic.keys())))
+    self.pattern = re.compile(b'|'.join(list(self.pipeline.magic.keys())))
 
   def consume(self, doc, payload):
     """

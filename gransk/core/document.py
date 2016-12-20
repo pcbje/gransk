@@ -168,7 +168,7 @@ def get_document(path, parent=None):
   doc.docid = digest.hexdigest()
 
   _, ext = os.path.splitext(doc.path)
-  doc.ext = ext.lower() or 'none'
+  doc.ext = ext.lstrip('.').lower() or 'none'
 
   doc.parent = parent
 

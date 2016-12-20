@@ -27,8 +27,8 @@ class TikaExtractorTest(unittest.TestCase):
     extractor = tika_extractor.Subscriber(mock_pipeline)
 
     expected = (
-        'This is an unstructured document containing the \nidentifier '
-        '"193.34.2.1" (ip address), stored as a PDF document.')
+        b'This is an unstructured document containing the \nidentifier '
+        b'"193.34.2.1" (ip address), stored as a PDF document.')
 
     with open('config.yml') as inp:
       config = yaml.load(inp.read())
@@ -48,7 +48,7 @@ class TikaExtractorTest(unittest.TestCase):
 
     actual = doc.text
 
-    self.assertEqual(expected, actual)
+    self.assertEqual(expected.decode('utf-8'), actual)
 
 
 if __name__ == '__main__':
