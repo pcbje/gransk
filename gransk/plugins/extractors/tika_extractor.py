@@ -131,7 +131,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     info = {}
 
-    for line in out.split('\n'):
+    for line in out.decode('utf-8').split('\n'):
       line = line.strip()
 
       if not line:
@@ -154,7 +154,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     if err:
       return None
 
-    outlines = out.strip().split('\n')
+    outlines = out.decode('utf-8').strip().split('\n')
 
     if len(outlines) < 3:
       return None
