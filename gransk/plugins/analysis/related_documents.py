@@ -30,7 +30,7 @@ class Subscriber(abstract_related.Subscriber):
     }
 
     for _, entity in entities:
-      key = json.dumps(entity)
+      key = json.dumps(entity, sort_keys=True)
       self.buckets[doc.docid]['bins'].update([key])
 
     self.new_data = True

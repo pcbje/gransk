@@ -7,7 +7,7 @@ python:
   - "2.7"
 
 install:
-  - "sudo apt-get install --force-yes -y python-dev zlib1g-dev p7zip-full libicu-dev fontconfig rubygems-integration"
+  - "sudo apt-get install --force-yes -y python-dev zlib1g-dev p7zip-full libicu-dev fontconfig rubygems-integration poppler-utils ghostscript"
   - "sudo gem install coveralls-lcov"
   - "sudo apt-get remove --purge -y bzip2 libbz2-dev"
   - "pip install -r utils/dfvfs-requirements.txt"
