@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 
 from io import BytesIO
@@ -37,6 +39,7 @@ class MagicTest(unittest.TestCase):
     actual = mock_mod.produced[0][1].read()
 
     self.assertEquals(expected, actual)
+
 
 if __name__ == '__main__':
   unittest.main()

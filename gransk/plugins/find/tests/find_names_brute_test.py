@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import logging
 import unittest
 
@@ -21,17 +23,17 @@ class FindNamesBruteTest(unittest.TestCase):
     find_names = _find_names.Subscriber(test_helper.get_mock_pipeline([]))
     find_names.setup(config)
     doc = document.get_document('dummy')
-    doc.text = u'Dette  er Tom Martin.'
+    doc.text = 'Dette  er Tom Martin.'
     find_names.consume(doc, None)
     expected = [(10, {
-        u'entity_id': u'tom_martin',
-        u'type': u'per',
-        u'value': u'Tom Martin'
+        'entity_id': 'tom_martin',
+        'type': 'per',
+        'value': 'Tom Martin'
     })]
     self.assertEqual(expected, doc.entities.get_all())
 
   def test_bug(self):
-    text = u"""MT-2009-12-015-W001 – SIMULATED WARRANT
+    text = """MT-2009-12-015-W001 – SIMULATED WARRANT
 Computers assigned to Jo Smith from November 13, 2009 to December 12, 2009.
 """
     config = {
@@ -44,15 +46,14 @@ Computers assigned to Jo Smith from November 13, 2009 to December 12, 2009.
     doc.text = text
     find_names.consume(doc, None)
     expected = [(62, {
-        u'entity_id': u'jo_smith',
-        u'type': u'per',
-        u'value': u'Jo Smith'
+        'entity_id': 'jo_smith',
+        'type': 'per',
+        'value': 'Jo Smith'
     })]
     self.assertEqual(expected, doc.entities.get_all())
 
-
   def test_bug_2(self):
-    text = u""" os setup( name='recgonizer', author='Petter Christian Bjelland', version='0.3',"""
+    text = """ os setup( name='recgonizer', author='Petter Christian Bjelland', version='0.3',"""
     config = {
         'code_root': '.',
         'name_model': 'utils/names.gz'

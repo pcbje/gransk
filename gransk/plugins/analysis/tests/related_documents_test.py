@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 import os
 import shutil
@@ -26,21 +28,21 @@ class RelatedDocumentsTest(unittest.TestCase):
 
     subscriber.setup(config)
 
-    doc1 = document.get_document(u'dummy1.txt')
-    doc1.docid = u'mock'
-    doc1.entities.add(0, u'mock1', u'e1')
-    doc1.entities.add(1, u'mock2', u'e2')
-    doc1.entities.add(2, u'mock3', u'e3')
+    doc1 = document.get_document('dummy1.txt')
+    doc1.docid = 'mock'
+    doc1.entities.add(0, 'mock1', 'e1')
+    doc1.entities.add(1, 'mock2', 'e2')
+    doc1.entities.add(2, 'mock3', 'e3')
     subscriber.consume(doc1, None)
 
     doc2 = document.get_document('dummy2.txt')
-    doc2.entities.add(0, u'mock1', u'e1')
-    doc2.entities.add(1, u'mock2', u'e2')
-    doc2.entities.add(2, u'mock3', u'e4')
+    doc2.entities.add(0, 'mock1', 'e1')
+    doc2.entities.add(1, 'mock2', 'e2')
+    doc2.entities.add(2, 'mock3', 'e4')
     subscriber.consume(doc2, None)
 
-    doc3 = document.get_document(u'dummy3.txt')
-    doc3.entities.add(0, u'mock1', u'e1')
+    doc3 = document.get_document('dummy3.txt')
+    doc3.entities.add(0, 'mock1', 'e1')
     subscriber.consume(doc3, None)
 
     subscriber.stop()

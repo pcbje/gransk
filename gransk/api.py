@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import requests
 import time
 import json
@@ -13,6 +16,7 @@ import shutil
 
 import six.moves.http_client
 
+import gransk.core.compat as _
 import gransk.core.pipeline as pipeline
 import gransk.core.document as document
 import gransk.core.helper as helper
@@ -22,9 +26,9 @@ logging.getLogger('urllib3').setLevel(logging.ERROR)
 logging.getLogger('requests').setLevel(logging.ERROR)
 logging.getLogger('polyglot').setLevel(logging.ERROR)
 logging.basicConfig(
-      format=u'[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
+      format='[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
       level=logging.INFO,
-      datefmt=u'%Y-%m-%d %H:%M:%S')
+      datefmt='%Y-%m-%d %H:%M:%S')
 
 LOGGER = logging.getLogger('MAIN')
 

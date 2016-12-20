@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import logging
 
@@ -32,7 +34,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       try:
         os.makedirs(self.root)
       except Exception as err:
-        LOGGER.debug("could not create dir %s: %s" % (self.root, err))
+        LOGGER.debug("could not create dir %s: %s", self.root, err)
 
   def consume(self, doc, payload):
     """
@@ -52,7 +54,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     new_path = os.path.join(self.root, new_filename)
 
-    with open(new_path.encode('utf-8'), 'wb') as out:
-      out.write(doc.text.encode('utf-8'))
+    with open(new_path, 'wb') as out:
+      out.write(doc.text)
 
-    doc.meta[u'text_file'] = new_path
+    doc.meta['text_file'] = new_path

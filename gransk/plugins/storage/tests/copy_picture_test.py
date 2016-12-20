@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import unittest
 try:
@@ -33,8 +35,8 @@ class CopyPictureTest(unittest.TestCase):
     _copy_picture = copy_picture.Subscriber(mock_pipeline)
     _copy_picture.setup({
         helper.DATA_ROOT: data_root,
-        u'workers': 1,
-        u'tag': 'default',
+        'workers': 1,
+        'tag': 'default',
     })
 
     doc = document.get_document('mock.jpg')

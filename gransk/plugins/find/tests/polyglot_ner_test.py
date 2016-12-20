@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import logging
 import unittest
 
@@ -18,17 +20,17 @@ class FindNamesNerTest(unittest.TestCase):
     config = {
         'code_root': '.',
         helper.INJECTOR: test_helper.MockInjector(
-            ner_entities=[(10, u'Hans Petter')])
+            ner_entities=[(10, 'Hans Petter')])
     }
     find_names = _find_names.Subscriber(test_helper.get_mock_pipeline([]))
     find_names.setup(config)
     doc = document.get_document('dummy')
-    doc.text = u'Dette  er Hans Petter.'
+    doc.text = 'Dette  er Hans Petter.'
     find_names.consume(doc, None)
     expected = [(10, {
-        'entity_id': u'hans_petter',
-        'type': u'per',
-        'value': u'Hans Petter'
+        'entity_id': 'hans_petter',
+        'type': 'per',
+        'value': 'Hans Petter'
     })]
     self.assertEqual(expected, doc.entities.get_all())
 

@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import gzip
 import math
 import re as regex
@@ -34,13 +36,13 @@ class Subscriber(abstract_subscriber.Subscriber):
     reference_model = os.path.join(
         config[helper.CODE_ROOT], config[helper.NAME_MODEL])
 
-    self.stopper = regex.compile((u'(%s)' % u'|'.join([
+    self.stopper = regex.compile(('(%s)' % '|'.join([
         'and', 'or', 'og', 'eller', r'\?', '&', '<', '>', '@', ':', ';', '/',
         r'\(', r'\)', 'i', 'of', 'from', 'to', r'\n', '!'])),
         regex.I | regex.MULTILINE)
 
     self.semistop = regex.compile(
-        (u'(%s)' % u'|'.join([','])), regex.I | regex.MULTILINE)
+        ('(%s)' % '|'.join([','])), regex.I | regex.MULTILINE)
     self.size_probability = [0.000, 0.000, 0.435, 0.489, 0.472, 0.004, 0.000]
     self.threshold = 0.25
     self.candidates = defaultdict(int)

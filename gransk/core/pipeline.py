@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import logging
 import traceback
 import sys
@@ -91,21 +93,21 @@ class Pipeline(object):
     :type doc: ``gransk.core.Document``
     :type payload: ``file``
     """
-    caller = inspect.currentframe().f_back.f_locals[u'self'].__module__
+    caller = inspect.currentframe().f_back.f_locals['self'].__module__
     listeners = self.listeners.get(topic, [])
     filename = os.path.basename(doc.path)
 
     for listener, callback in listeners:
-      LOGGER.debug(u'[%s] %s -> %s (%s)' % (topic, caller, listener, filename))
+      LOGGER.debug('[%s] %s -> %s (%s)', topic, caller, listener, filename)
       callback(doc, payload)
 
     if len(listeners) == 0:
-      LOGGER.debug(u'[%s] %s -> no listeners (%s)' % (topic, caller, filename))
+      LOGGER.debug('[%s] %s -> no listeners (%s)', topic, caller, filename)
 
   def stop(self):
     """Stop all subscribers."""
     for subscriber in self.subscribers:
-      LOGGER.debug(u"> stopping %s" % subscriber)
+      LOGGER.debug('> stopping %s', subscriber)
       subscriber.stop()
 
   def get_time_report(self):
@@ -122,7 +124,7 @@ def init_subscriber(config, subscriber_mod, pipeline):
   :type subscriber_mod: ``str``
   :type pipline: ``gransk.core.Pipeline``
   """
-  LOGGER.debug(u"> starting %s" % subscriber_mod)
+  LOGGER.debug('> starting %s', subscriber_mod)
 
   try:
     mod = __import__(subscriber_mod, fromlist=['Subscriber'])
@@ -132,7 +134,7 @@ def init_subscriber(config, subscriber_mod, pipeline):
     pipeline.subscribers.append(subscriber)
   except Exception as err:
     traceback.print_exc(file=sys.stdout)
-    LOGGER.warning('! %s could not be loaded: %s' % (subscriber_mod, err))
+    LOGGER.warning('! %s could not be loaded: %s', subscriber_mod, err)
 
 
 def build_pipeline(config):

@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 
 try:
@@ -36,6 +38,7 @@ class StringsTest(unittest.TestCase):
     actual = pipe.consumer.produced[0][0].path
 
     self.assertEquals(expected, actual)
+
 
 if __name__ == '__main__':
   unittest.main()

@@ -1,10 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import subprocess
 import shutil
-import chardet
 
 import gransk.core.abstract_subscriber as abstract_subscriber
 import gransk.core.helper as helper
@@ -47,9 +48,9 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     filename = os.path.basename(doc.path)
 
-    unique_filename = u'%s-%s' % (doc.docid[0:8], filename)
+    unique_filename = '%s-%s' % (doc.docid[0:8], filename)
     unpack_to = os.path.join(
-        self.config[helper.DATA_ROOT], u'archives', unique_filename)
+        self.config[helper.DATA_ROOT], 'archives', unique_filename)
 
     if not os.path.exists(unpack_to):
       os.makedirs(unpack_to)
@@ -88,9 +89,4 @@ class Subscriber(abstract_subscriber.Subscriber):
     shutil.rmtree(unpack_to)
 
   def _get_cmd(self, path, decompress_to):
-    filename = path.encode('utf-8')
-    if isinstance(filename, str):
-      enc = chardet.detect(filename).get('encoding')
-      filename = filename.decode(enc)
-
-    return [u'7z', u'e', '-p%s' % self.password, u'-y', u'-o%s' % decompress_to, filename]
+    return ['7z', 'e', '-p%s' % self.password, '-y', '-o%s' % decompress_to, path]

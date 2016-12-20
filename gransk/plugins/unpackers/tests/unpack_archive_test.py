@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 
 import gransk.core.helper as helper
@@ -17,8 +19,8 @@ class UnapckArchiveTest(unittest.TestCase):
 
     detector = unpack_archive.Subscriber(mock_pipe)
     detector.setup({
-        helper.DATA_ROOT: u'local_data',
-        helper.TAG: u'test',
+        helper.DATA_ROOT: 'local_data',
+        helper.TAG: 'test',
         helper.WORKER_ID: 0
     })
 
@@ -40,8 +42,8 @@ class UnapckArchiveTest(unittest.TestCase):
 
     detector = unpack_archive.Subscriber(mock_pipe)
     detector.setup({
-        helper.DATA_ROOT: u'local_data',
-        helper.TAG: u'test',
+        helper.DATA_ROOT: 'local_data',
+        helper.TAG: 'test',
         helper.WORKER_ID: 0
     })
 
@@ -52,8 +54,8 @@ class UnapckArchiveTest(unittest.TestCase):
     with open(doc.path, 'rb') as inp:
       detector.consume(doc, inp)
 
-
     self.assertEqual(1, len(mock_pipe.consumer.produced))
+
 
 if __name__ == '__main__':
   unittest.main()

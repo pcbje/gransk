@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 """Module containing string variables used throughout the processing."""
 
+from __future__ import unicode_literals
+
+
 ANALYZE = 'analyze'
 ARCHIVE = 'archive'
 BLACKLIST = 'blacklist'

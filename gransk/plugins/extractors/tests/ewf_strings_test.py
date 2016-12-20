@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 import re
 
@@ -19,30 +21,30 @@ class EwfStringsTest(unittest.TestCase):
     with open('gransk/plugins/unpackers/tests/test_data/dummy.E01', 'rb') as inp:
       _strings.consume(doc, inp)
 
-    expected = (u"IDUMMY      FAT12"
-                u"Non-system disk"
-                u"Press any key to reboot"
+    expected = ('IDUMMY      FAT12'
+                'Non-system disk'
+                'Press any key to reboot'
 
-                u"DUMMY      ("
-                u"~1      TRA\""
-                u"FILE-B  TXT"
-                u".          2"
-                u"Mac OS X"
-                u"This resource fork intentionally left blank"
-                u".          2"
-                u"FSEVEN~1"
-                u"000000~1"
-                u"000000~2"
-                u"D3E90FC1-F0EF-427D-B874-2BECB6BEA409"
-                u".          0"
-                u"FILE-A  TXT"
-                u"Hi, I'm file A."
-                u"And I'm file B.")
+                'DUMMY      ('
+                '~1      TRA"'
+                'FILE-B  TXT'
+                '.          2'
+                'Mac OS X'
+                'This resource fork intentionally left blank'
+                '.          2'
+                'FSEVEN~1'
+                '000000~1'
+                '000000~2'
+                'D3E90FC1-F0EF-427D-B874-2BECB6BEA409'
+                '.          0'
+                'FILE-A  TXT'
+                "Hi, I'm file A."
+                "And I'm file B.")
 
     actual = doc.text
 
     self.assertNotEqual(None, actual)
-    self.assertEqual(re.sub(r'\s', u'', expected), re.sub(r'\s', u'', actual))
+    self.assertEqual(re.sub(r'\s', '', expected), re.sub(r'\s', '', actual))
 
 
 if __name__ == '__main__':

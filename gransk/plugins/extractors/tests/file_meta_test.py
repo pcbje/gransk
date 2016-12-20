@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 import json
 
@@ -19,7 +21,7 @@ class FileMetaTest(unittest.TestCase):
 
   def test_simple(self):
     _file_meta = file_meta.Subscriber(test_helper.get_mock_pipeline([]))
-    response = json.dumps({u'Content-Type': u'image/jpeg'}).encode('utf-8')
+    response = json.dumps({'Content-Type': 'image/jpeg'}).encode('utf-8')
     _file_meta.setup({
         'code_root': '.',
         'host': 'mock',
@@ -28,9 +30,9 @@ class FileMetaTest(unittest.TestCase):
 
     doc = document.get_document('mock.txt')
 
-    _file_meta.consume(doc, StringIO(u'mock'))
+    _file_meta.consume(doc, StringIO('mock'))
 
-    expected = u'picture'
+    expected = 'picture'
     actual = doc.doctype
 
     self.assertEqual(expected, actual)

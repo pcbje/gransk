@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 
 import gransk.core.process as process
@@ -42,6 +44,7 @@ class BootstrapTest(unittest.TestCase):
     _process.consume(doc, None)
 
     self.assertEquals(100, doc.meta['size'])
+
 
 if __name__ == '__main__':
   unittest.main()

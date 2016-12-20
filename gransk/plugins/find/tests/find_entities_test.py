@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 import yaml
 
@@ -26,7 +28,7 @@ class FindEntitiesTest(unittest.TestCase):
         pattern_conf['test'] = [pattern_conf['test']]
 
       for test in pattern_conf['test']:
-        doc.text = u'dum dum {} dum'.format(test)
+        doc.text = 'dum dum {} dum'.format(test)
         _find_entities.consume(doc, None)
         entities = doc.entities.get_all()
 

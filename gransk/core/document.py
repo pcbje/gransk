@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import time
 import hashlib
@@ -135,7 +137,7 @@ class Document(object):
         'parent': parent_obj,
         'tag': self.tag,
         'status': self.status,
-        'text': self.text if self.text else u'',
+        'text': self.text if self.text else '',
         'meta': meta
     }
 
@@ -148,25 +150,25 @@ def get_document(path, parent=None):
   :param parent: Parent document (e.g. diskimage or archive).
   :returns: ``gransk.core.Document``
   """
-  doc = Document()
-  doc.path = path
+  if isinstance(path, unicode):
+    bpath, upath = path.encode('utf-8'), path
+  else:
+    bpath, upath = path, path.decode('utf-8')
 
-  if os.path.dirname(path):
-    doc.meta['directory'] = os.path.dirname(path)
+  doc = Document()
+  doc.path = upath
+
+  if os.path.dirname(doc.path):
+    doc.meta['directory'] = os.path.dirname(doc.path)
 
   digest = hashlib.md5()
 
-  try:
-    digest.update(path.encode('utf-8'))
-  except UnicodeDecodeError:
-    digest.update(path)
+  digest.update(bpath)
 
   doc.docid = digest.hexdigest()
 
-  if '.' in doc.path:
-    doc.ext = os.path.basename(doc.path).split('.')[-1].lower()
-  else:
-    doc.ext = u'none'
+  _, ext = os.path.splitext(doc.path)
+  doc.ext = ext.lower() or 'none'
 
   doc.parent = parent
 
