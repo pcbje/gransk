@@ -39,6 +39,7 @@ class TikaExtractorTest(unittest.TestCase):
     path = self.get_test_file('document.pdf')
 
     doc = document.get_document(path)
+    doc.meta['Content-Type'] = 'application/pdf'
 
     with open(doc.path, 'rb') as file_object:
       extractor.consume(doc, file_object)
