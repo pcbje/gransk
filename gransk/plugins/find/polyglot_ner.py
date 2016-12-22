@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import six
 from six import text_type as unicode
 
@@ -39,9 +41,9 @@ class Subscriber(abstract_subscriber.Subscriber):
       return
 
     for entity in entities:
-      entity_str = u' '.join(entity)
+      entity_str = ' '.join(entity)
 
-      if entity_str.endswith(u'’s') or entity_str.endswith(u'\'s'):
+      if entity_str.endswith('’s') or entity_str.endswith('\'s'):
         entity_str = entity_str[0:-2]
 
       _type = entity.tag.split('-')[-1].lower()

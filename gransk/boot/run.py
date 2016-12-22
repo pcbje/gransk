@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 """Process a document or folder or folder from command line."""
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import argparse
 import logging
@@ -27,6 +30,7 @@ from six.moves import range
 
 from tqdm import tqdm
 
+import gransk.core.compat as _
 import gransk.core.file_collector as collector
 import gransk.core.pipeline as pipeline
 import gransk.core.document as document
@@ -52,7 +56,7 @@ class Worker(object):
     :type worker_id: ``int``
     :type injector: ``gransk.core.injector.Injector``
     """
-    logger = logging.getLogger(u'worker')
+    logger = logging.getLogger('worker')
 
     config[helper.WORKER_ID] = worker_id
     config[helper.INJECTOR] = injector
@@ -66,14 +70,14 @@ class Worker(object):
       try:
         path = queue.get(timeout=1)
       except Empty:
-        logger.info((u'[normal stop] worker %s' % worker_id).encode('utf-8'))
+        logger.info('[normal stop] worker %d', worker_id)
         break
 
       try:
         doc = document.get_document(path, parent=document.get_document('root'))
         mod.consume(doc)
       except KeyboardInterrupt:
-        logger.info("[aborting] worker %s" % worker_id)
+        logger.info('[aborting] worker %d', worker_id)
         break
 
     pipe.stop()
@@ -96,7 +100,7 @@ class Worker(object):
     :type match_path: ``unicode``
     :returns: Processed paths.
     """
-    logger = logging.getLogger(u'boot')
+    logger = logging.getLogger('boot')
 
     data_root = config.get(helper.DATA_ROOT, 'local_data')
     config[helper.DATA_ROOT] = data_root
@@ -208,9 +212,9 @@ def run(inject, arg_list):
   logging.getLogger('requests').setLevel(logging.ERROR)
   logging.getLogger('polyglot').setLevel(logging.ERROR)
   logging.basicConfig(
-      format=u'[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
+      format='[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
       level=logging.DEBUG if args.debug else logging.INFO,
-      datefmt=u'%Y-%m-%d %H:%M:%S')
+      datefmt='%Y-%m-%d %H:%M:%S')
 
   gransk = load_config(args, inject)
 
@@ -231,6 +235,7 @@ def main():
 
   inject = injector.Injector()
   run(inject, sys.argv[1:])
+
 
 if __name__ == '__main__':
   main()

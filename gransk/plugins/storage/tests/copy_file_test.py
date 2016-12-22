@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import unittest
 
@@ -31,8 +33,8 @@ class CopyFileTest(unittest.TestCase):
     _copy = copy_file.Subscriber(mock_pipeline)
     _copy.setup({
         helper.DATA_ROOT: data_root,
-        u'workers': 1,
-        u'tag': 'default',
+        'workers': 1,
+        'tag': 'default',
         helper.COPY_EXT: ['xyz']
     })
 

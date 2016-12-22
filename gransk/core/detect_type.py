@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import logging
 import traceback
 import sys
@@ -55,7 +57,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       self.produce(helper.IGNORED_FILE, doc, payload)
       return
 
-    LOGGER.debug('processing: %s' % doc.path[-40::])
+    LOGGER.debug('processing: %s', doc.path[-40:])
 
     # Include hash of first 4KB as doc id.
     doc.set_id(payload.read(4096))
@@ -91,7 +93,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     except Exception as err:
       traceback.print_exc(file=sys.stdout)
-      LOGGER.warning('could not process %s: %s' % (doc.path, err))
+      LOGGER.warning('could not process %s: %s', doc.path, err)
       doc.status = 'error'
       doc.meta['gransk_error'] = six.text_type(err)
       self.produce(helper.ERRORED_FILE, doc, payload)

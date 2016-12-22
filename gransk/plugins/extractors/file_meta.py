@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import re
 import os
 import json
@@ -45,13 +47,13 @@ class Subscriber(abstract_subscriber.Subscriber):
     pattern_list = []
 
     for _type, patterns in typecache.items():
-      pattern_list.append(u'(?P<%s>(%s))' % (_type, u'|'.join(patterns)))
+      pattern_list.append('(?P<%s>(%s))' % (_type, '|'.join(patterns)))
 
-    self.typepattern = re.compile(u'|'.join(pattern_list), re.I)
+    self.typepattern = re.compile('|'.join(pattern_list), re.I)
 
   def __extract_metadata(self, doc, payload):
-    filename = os.path.basename(doc.path).encode('utf-8')
-    files = {
+    filename = os.path.basename(doc.path)
+    headers = {
         'Accept': 'application/json',
         'Content-Disposition': 'attachment; filename=%s' % filename
     }
@@ -59,7 +61,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     tika_url = self.config.get(helper.TIKA_META)
     connection = self.config[helper.INJECTOR].get_http_connection(tika_url)
     payload.seek(0)
-    connection.request('PUT', '/meta', payload.read(), files)
+    connection.request('PUT', '/meta', payload.read(), headers)
     payload.seek(0)
 
     response = connection.getresponse()

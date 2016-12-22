@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
 import os
 import re
 import sys
@@ -26,10 +30,10 @@ for folder, _, paths in os.walk(sys.argv[1]):
                     direct[m].update([p])
 
 for m in sorted(use.keys()):
-    #print "%s = '%s' # %s" % (m, m.lower(), ', '.join(use[m]))
-    print "%s = '%s'" % (m, m.lower())
+    #print("%s = '%s' # %s" % (m, m.lower(), ', '.join(use[m])))
+    print("%s = '%s'" % (m, m.lower()))
 
-print "\n\n__DIRECT__"
+print("\n\n__DIRECT__")
 
 for m in sorted(direct.keys()):
-    print "%s = '%s' # %s" % (m.upper(), m, ', '.join(direct[m]))
+    print("%s = '%s' # %s" % (m.upper(), m, ', '.join(direct[m])))

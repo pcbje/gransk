@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 import os
 import yaml
@@ -25,8 +27,8 @@ class TikaExtractorTest(unittest.TestCase):
     extractor = tika_extractor.Subscriber(mock_pipeline)
 
     expected = (
-        u'This is an unstructured document containing the \nidentifier '
-        u'"193.34.2.1" (ip address), stored as a PDF document.').encode('utf-8')
+        b'This is an unstructured document containing the \nidentifier '
+        b'"193.34.2.1" (ip address), stored as a PDF document.')
 
     with open('config.yml') as inp:
       config = yaml.load(inp.read())
@@ -44,9 +46,10 @@ class TikaExtractorTest(unittest.TestCase):
     with open(doc.path, 'rb') as file_object:
       extractor.consume(doc, file_object)
 
-    actual = doc.text.encode('utf-8')
+    actual = doc.text
 
-    self.assertEqual(expected, actual)
+    self.assertEqual(expected.decode('utf-8'), actual)
+
 
 if __name__ == '__main__':
   unittest.main()

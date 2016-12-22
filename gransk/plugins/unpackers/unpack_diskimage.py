@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import logging
 import re
@@ -70,7 +72,7 @@ class Subscriber(abstract_subscriber.Subscriber):
         self.produce(helper.PROCESS_FILE, newdoc, file_object)
         doc.children += 1
       except IOError as err:
-        LOGGER.debug(u'could not read path "%s": %s' % (path, err))
+        LOGGER.debug('could not read path "%s": %s', path, err)
         doc.meta['diskimage_read_error'] = six.text_type(err)
         return None
       except Exception as err:
@@ -93,5 +95,5 @@ class Subscriber(abstract_subscriber.Subscriber):
     try:
       diskreader.Read(doc.path.encode('utf-8'))
     except Exception as err:
-      LOGGER.debug(u'could not read image: %s' % (err))
+      LOGGER.debug('could not read image: %s', err)
       doc.meta['diskimage_error'] = six.text_type(err)

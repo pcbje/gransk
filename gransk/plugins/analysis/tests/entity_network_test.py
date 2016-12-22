@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import unittest
 import shutil
@@ -38,14 +40,14 @@ class EntityNetworkTest(unittest.TestCase):
     network.setup(config)
 
     doc1 = document.get_document('dummy1.txt')
-    doc1.entities.add(0, 'mock', u'e1')
-    doc1.entities.add(1, 'mock', u'e2')
-    doc1.entities.add(2, 'mock', u'e3')
+    doc1.entities.add(0, 'mock', 'e1')
+    doc1.entities.add(1, 'mock', 'e2')
+    doc1.entities.add(2, 'mock', 'e3')
     mock_pipeline.produce(helper.FINISH_DOCUMENT, doc1, None)
 
     doc1 = document.get_document('dummy2.txt')
-    doc1.entities.add(1, 'mock', u'e2')
-    doc1.entities.add(2, 'mock', u'e4')
+    doc1.entities.add(1, 'mock', 'e2')
+    doc1.entities.add(2, 'mock', 'e4')
     mock_pipeline.produce(helper.FINISH_DOCUMENT, doc1, None)
 
     one_hop = network.get_for('e1', hops=1)

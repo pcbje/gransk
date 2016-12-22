@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals, print_function
+
 import pyewf
 
 import gransk.plugins.extractors.strings as strings
@@ -39,7 +41,7 @@ class Subscriber(strings.Subscriber):
       super(Subscriber, self).consume(doc, ewf_handle)
     except Exception as err:
       doc.meta['ewf_strings_err'] = six.text_type(err)
-      print (err)
+      print(err)
 
     ewf_handle.close()
     payload.seek(0)

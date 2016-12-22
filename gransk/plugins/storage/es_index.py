@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import logging
 import threading
 import re
@@ -64,7 +66,7 @@ class Subscriber(abstract_subscriber.Subscriber):
         try:
           self.helper.bulk(self.elastic, bulk)
         except Exception as err:
-          LOGGER.error('es index error: %s' % err)
+          LOGGER.error('es index error: %s', err)
         bulk = []
 
       if stop:
@@ -77,7 +79,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
   def create_mapping(self):
     """Create index mappig in Elasticsearch cluster."""
-    LOGGER.info(self.elastic.indices.create(index=u'gransk', ignore=400, body={
+    LOGGER.info(self.elastic.indices.create(index='gransk', ignore=400, body={
         "settings": {
             "number_of_shards": 5,
             "analysis": {
@@ -157,14 +159,14 @@ class Subscriber(abstract_subscriber.Subscriber):
       tag = doc.tag
 
     obj = {
-        u"_op_type": u"index",
-        u"_index": u'gransk',
-        u"_type": u'document',
-        u"_source": doc.as_obj(),
-        u'_id': doc.docid
+        "_op_type": "index",
+        "_index": 'gransk',
+        "_type": 'document',
+        "_source": doc.as_obj(),
+        '_id': doc.docid
     }
 
-    obj['_source'][u'tag'] = tag
+    obj['_source']['tag'] = tag
 
     self.elastic_bulk.put(obj)
 
@@ -181,15 +183,15 @@ class Subscriber(abstract_subscriber.Subscriber):
       cache[entity_id] = True
 
       self.elastic_bulk.put({
-          u"_op_type": u"index",
-          u"_index": u'gransk',
-          u"_type": u'entity',
-          u"_source": {
+          "_op_type": "index",
+          "_index": 'gransk',
+          "_type": 'entity',
+          "_source": {
               'type': entity_type,
               'value': entity_value,
               'entity_id': entity_id
           },
-          u'_id': '%s\x00%s' % (entity_type, entity_value)
+          '_id': '%s\x00%s' % (entity_type, entity_value)
       })
 
       ctx_start = max(
@@ -200,10 +202,10 @@ class Subscriber(abstract_subscriber.Subscriber):
       context = re.sub('\s+', ' ', context)
 
       self.elastic_bulk.put({
-          u"_op_type": u"index",
-          u"_index": u'gransk',
-          u"_type": u'in_doc',
-          u"_source": {
+          "_op_type": "index",
+          "_index": 'gransk',
+          "_type": 'in_doc',
+          "_source": {
               'entity_id': entity_id,
               'entity_type': entity_type,
               'entity_value': entity_value,
@@ -213,6 +215,6 @@ class Subscriber(abstract_subscriber.Subscriber):
               'context': context,
               'raw_entity': json.dumps(entity_obj)
           },
-          u'_id': '%s\x00%s\x00%s\x00%s' % (
+          '_id': '%s\x00%s\x00%s\x00%s' % (
               doc.docid[-12::], entity_value, entity_type, start)
       })

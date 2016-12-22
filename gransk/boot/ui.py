@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 """Start the gransk web UI."""
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import argparse
 import os
 import logging
@@ -74,7 +77,7 @@ def add_header(response):
   return response
 
 
-@app.route('/upload', methods=[u'POST'])
+@app.route('/upload', methods=['POST'])
 def upload():
   """Receive and process an uploaded file."""
   _file = request.files.get('file')
@@ -83,14 +86,14 @@ def upload():
       secure_filename(_file.filename),
       parent=document.get_document('root'))
 
-  doc.tag = u'upload'
+  doc.tag = 'upload'
 
   _globals['gransk'].add_file(doc, file_object=_file)
 
   return Response('ok')
 
 
-@app.route('/data', methods=[u'DELETE'])
+@app.route('/data', methods=['DELETE'])
 def delete_data():
   """Clear all processed data."""
   _globals['gransk'].clear_all()
@@ -98,7 +101,7 @@ def delete_data():
   return Response('ok')
 
 
-@app.route('/file', methods=[u'GET'])
+@app.route('/file', methods=['GET'])
 def get_file():
   """Get original file."""
   filename = secure_filename(request.args['filename'])
@@ -127,7 +130,7 @@ def search():
   return Response(r.text, status=200, mimetype='application/json')
 
 
-@app.route('/picture', methods=[u'GET'])
+@app.route('/picture', methods=['GET'])
 def picture():
   """Get document content as picture."""
   name = secure_filename(request.args['name'])
@@ -143,7 +146,7 @@ def picture():
     return Response(fp.read(), mimetype=mediatype, status=200)
 
 
-@app.route('/related', methods=[u'GET'])
+@app.route('/related', methods=['GET'])
 def related():
   """Get related documents or entities."""
   if request.args['type'] == 'document':
@@ -162,7 +165,7 @@ def related():
   return Response(json.dumps(result), status=200, mimetype='application/json')
 
 
-@app.route('/network', methods=[u'GET'])
+@app.route('/network', methods=['GET'])
 def entity_network():
   """Get the generated network around a given entitiy ID."""
   hops = int(request.args.get('hops', 1))
@@ -173,7 +176,7 @@ def entity_network():
   return Response(json.dumps(result), status=200, mimetype='application/json')
 
 
-@app.route('/saveall', methods=[u'GET'])
+@app.route('/saveall', methods=['GET'])
 def saveall():
   """Save all related data to the disk."""
 
@@ -184,7 +187,7 @@ def saveall():
   return Response('ok')
 
 
-@app.route('/', methods=[u'GET'])
+@app.route('/', methods=['GET'])
 def home():
   """Get main page."""
   return app.send_static_file('index.html')
@@ -204,9 +207,9 @@ def parse_args():
 def setup(args, pipeline, runmod, injector):
   """Load configuration"""
   logging.basicConfig(
-      format=u'[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
+      format='[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
       level=logging.INFO,
-      datefmt=u'%Y-%m-%d %H:%M:%S')
+      datefmt='%Y-%m-%d %H:%M:%S')
 
   _globals['gransk'] = gransk.api.API(injector)
   _globals['config'] = _globals['gransk'].config
@@ -219,6 +222,7 @@ def setup(args, pipeline, runmod, injector):
 
   if _globals['gransk'].pipeline.get_service('related_documents'):
     _globals['gransk'].pipeline.get_service('related_documents').load_all(_globals['config'])
+
 
 if __name__ == '__main__':
   args = parse_args()

@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 
 import gransk.core.pipeline as pipeline
@@ -18,6 +20,7 @@ class PipelineTest(unittest.TestCase):
     self.assertEquals(len(pipe.subscribers), 1)
 
     pipe.stop()
+
 
 if __name__ == '__main__':
   unittest.main()

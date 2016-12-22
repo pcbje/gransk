@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import logging
 import os
 import pickle
@@ -79,7 +81,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
   def stop(self):
     """Write data to file."""
-    logging.debug('flushing %s.' % self.NAME)
+    logging.debug('flushing %s.', self.NAME)
     self.save_all()
 
   def consume(self, doc, payload):

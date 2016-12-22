@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 
 import gransk.core.helper as helper
@@ -17,9 +19,9 @@ class UnpackDiskimageTest(unittest.TestCase):
 
     self.detector = unpack_diskimage.Subscriber(self.mock_pipe)
     self.detector.setup({
-        u'max_file_size': 1,
+        'max_file_size': 1,
         helper.DATA_ROOT: 'local_data',
-        u'code_root': '.'
+        'code_root': '.'
     })
 
   def test_simple(self):
@@ -32,9 +34,9 @@ class UnpackDiskimageTest(unittest.TestCase):
     actual = [doc.path for doc, _ in self.mock_pipe.consumer.produced]
 
     expected = [
-        u'/DUMMY       (Volume Label Entry)',
-        u'/test/file-a.txt',
-        u'/file-b.txt'
+        '/DUMMY       (Volume Label Entry)',
+        '/test/file-a.txt',
+        '/file-b.txt'
     ]
 
     self.assertEquals(expected, actual)

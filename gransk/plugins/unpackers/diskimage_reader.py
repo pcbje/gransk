@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # pylint: skip-file
-from __future__ import absolute_import
-from __future__ import print_function
+
+from __future__ import absolute_import, unicode_literals, print_function
+
 import logging
 import os
 from collections import OrderedDict
@@ -41,7 +42,7 @@ class Reader(object):
 
       full_path = file_system.JoinPath([parent_full_path, name])
     except Exception as err:
-      print ("!", err, name)
+      print("!", err, name)
       return
 
     if depth < 5:
@@ -61,7 +62,7 @@ class Reader(object):
 
   def _GetTSKPartitionIdentifiers(self, scan_node):
     if not scan_node or not scan_node.path_spec:
-      raise RuntimeError(u'Invalid scan node.')
+      raise RuntimeError('Invalid scan node.')
 
     volume_system = tsk_volume_system.TSKVolumeSystem()
     volume_system.Open(scan_node.path_spec)
@@ -70,14 +71,14 @@ class Reader(object):
         volume_system)
 
     if not volume_identifiers:
-      print(u'[WARNING] No partitions found.')
+      print('[WARNING] No partitions found.')
       return
 
     return volume_identifiers
 
   def _GetVSSStoreIdentifiers(self, scan_node):
     if not scan_node or not scan_node.path_spec:
-      raise RuntimeError(u'Invalid scan node.')
+      raise RuntimeError('Invalid scan node.')
 
     volume_system = vshadow_volume_system.VShadowVolumeSystem()
     volume_system.Open(scan_node.path_spec)
@@ -92,7 +93,7 @@ class Reader(object):
 
   def _ScanVolume(self, scan_context, volume_scan_node, base_path_specs):
     if not volume_scan_node or not volume_scan_node.path_spec:
-      raise RuntimeError(u'Invalid or missing volume scan node.')
+      raise RuntimeError('Invalid or missing volume scan node.')
 
     if len(volume_scan_node.sub_nodes) == 0:
       self._ScanVolumeScanNode(scan_context, volume_scan_node, base_path_specs)
@@ -104,7 +105,7 @@ class Reader(object):
   def _ScanVolumeScanNode(
           self, scan_context, volume_scan_node, base_path_specs):
     if not volume_scan_node or not volume_scan_node.path_spec:
-      raise RuntimeError(u'Invalid or missing volume scan node.')
+      raise RuntimeError('Invalid or missing volume scan node.')
 
     scan_node = volume_scan_node
     while len(scan_node.sub_nodes) == 1:
@@ -118,7 +119,7 @@ class Reader(object):
 
   def _GetNextLevelTSKPartitionVolumeSystemPathSpec(self, source_path_spec):
     return path_spec_factory.Factory.NewPathSpec(
-        definitions.TYPE_INDICATOR_TSK_PARTITION, location=u'/p1',
+        definitions.TYPE_INDICATOR_TSK_PARTITION, location='/p1',
         parent=source_path_spec)
 
   def _ScanVolumeScanNodeVSS(
@@ -133,7 +134,7 @@ class Reader(object):
     self.parent.meta['vss_count'] = len(vss_store_identifiers)
 
     for vss_store_identifier in vss_store_identifiers:
-      location = u'/vss{0:d}'.format(vss_store_identifier)
+      location = '/vss{0:d}'.format(vss_store_identifier)
       sub_scan_node = volume_scan_node.GetSubNodeByLocation(location)
       if not sub_scan_node:
         continue
@@ -154,19 +155,19 @@ class Reader(object):
       file_entry = resolver.Resolver.OpenFileEntry(base_path_spec)
       if file_entry is None:
         logging.warning(
-            u'Unable to open base path specification:\n{0:s}'.format(
+            'Unable to open base path specification:\n{0:s}'.format(
                 base_path_spec.comparable))
         continue
 
-      self._ExtractFileEntries(file_system, file_entry, u'', 0)
+      self._ExtractFileEntries(file_system, file_entry, '', 0)
 
       file_system.Close()
 
   def _GetBasePathSpecs(self, source_path):
-    if (not source_path.startswith(u'\\\\.\\') and
+    if (not source_path.startswith('\\\\.\\') and
             not os.path.exists(source_path)):
       raise RuntimeError(
-          u'No such device, file or directory: {0:s}.'.format(source_path))
+          'No such device, file or directory: {0:s}.'.format(source_path))
 
     scan_context = source_scanner.SourceScannerContext()
     scan_context.OpenSourcePath(source_path)
@@ -175,7 +176,7 @@ class Reader(object):
       self._source_scanner.Scan(scan_context)
     except (errors.BackEndError, ValueError) as exception:
       raise RuntimeError(
-          u'Unable to scan source with error: {0:s}.'.format(exception))
+          'Unable to scan source with error: {0:s}.'.format(exception))
 
     if scan_context.source_type not in [
             definitions.SOURCE_TYPE_STORAGE_MEDIA_DEVICE,
@@ -200,14 +201,14 @@ class Reader(object):
 
     else:
       for partition_identifier in partition_identifiers:
-        location = u'/{0:s}'.format(partition_identifier)
+        location = '/{0:s}'.format(partition_identifier)
         sub_scan_node = scan_node.GetSubNodeByLocation(location)
 
         self._ScanVolume(scan_context, sub_scan_node, base_path_specs)
 
     if not base_path_specs:
       raise RuntimeError(
-          u'No supported file system found in source.')
+          'No supported file system found in source.')
 
     return base_path_specs
 

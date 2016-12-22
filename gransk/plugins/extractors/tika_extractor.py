@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import subprocess
 
@@ -49,7 +51,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     if not self._accept(doc):
       return
 
-    filename = os.path.basename(doc.path).encode('utf-8')
+    filename = os.path.basename(doc.path)
     content_type = doc.meta['Content-Type']
 
     payload.seek(0)

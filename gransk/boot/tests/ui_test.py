@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import os
 import unittest
 import tempfile
@@ -13,7 +16,7 @@ import gransk.core.tests.test_helper as test_helper
 class MockEntityNetwork(object):
 
   def get_for(self, entity_id, hops):
-    return {u'mock': u'mock'}
+    return {'mock': 'mock'}
 
 
 class MockRelated(object):
@@ -106,8 +109,8 @@ class UiTest(unittest.TestCase):
     except:
       pass
 
-    with open(os.path.join(picture_root, 'test.jpg'), 'w') as out:
-      out.write(u'abcde')
+    with open(os.path.join(picture_root, 'test.jpg'), 'wb') as out:
+      out.write(b'abcde')
 
     rv = self.app.get('/picture?name=test.jpg&mediatype=image/jpeg')
 

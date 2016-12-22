@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import logging
 import os
 import re
@@ -17,8 +19,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
   def setup(self, _):
     """Compile file headers for all magic extractors into a regex pattern."""
-    self.pattern = re.compile(
-        b'|'.join(list(self.pipeline.magic.keys())))
+    self.pattern = re.compile(b'|'.join(list(self.pipeline.magic.keys())))
 
   def consume(self, doc, payload):
     """
@@ -41,5 +42,5 @@ class Subscriber(abstract_subscriber.Subscriber):
     doc.magic_hit = True
 
     for listener, callback in self.pipeline.magic[hit.group()]:
-      LOGGER.debug(u'magic -> %s (%s)' % (listener, filename))
+      LOGGER.debug('magic -> %s (%s)', listener, filename)
       callback(doc, payload)

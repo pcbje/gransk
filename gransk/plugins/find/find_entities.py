@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import re as regex
 import socket
 
@@ -26,10 +28,10 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     for entity_type, pattern_conf in config.get(helper.ENTITIES, {}).items():
       patterns.append(
-          u'\\b(?P<{}>{})\\b'.format(entity_type, pattern_conf[helper.PATTERN]))
+          r'\b(?P<{}>{})\b'.format(entity_type, pattern_conf[helper.PATTERN]))
 
     self.pattern = regex.compile(
-        u'|'.join(patterns),
+        '|'.join(patterns),
         regex.I | regex.U)
 
   def consume(self, doc, _):
@@ -47,7 +49,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     for result in self.pattern.finditer(doc.text):
       entity_value = result.group(result.lastgroup)
 
-      if result.lastgroup == u'ip_addr':
+      if result.lastgroup == 'ip_addr':
         try:
           socket.inet_aton(entity_value)
         except socket.error:

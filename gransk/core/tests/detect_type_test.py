@@ -1,12 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import unittest
-try:
-  from StringIO import StringIO
-except ImportError:
-  from io import StringIO
+from six import StringIO
 
 import yaml
 
@@ -52,6 +51,7 @@ class DetectTypeTest(unittest.TestCase):
   def test_not_accepted(self):
     self.assertEquals(
         self._run_test('.DS_Store').status, helper.IGNORED)
+
 
 if __name__ == '__main__':
   unittest.main()

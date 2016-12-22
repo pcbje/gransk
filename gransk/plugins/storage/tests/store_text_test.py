@@ -1,12 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import os
 import unittest
-try:
-  from StringIO import StringIO
-except ImportError:
-  from io import StringIO
 import shutil
 
 import gransk.core.helper as helper
@@ -28,7 +26,7 @@ class StoreTextTest(unittest.TestCase):
     _store_text = store_text.Subscriber(mock_pipeline)
     _store_text.setup({
         helper.DATA_ROOT: data_root,
-        u'workers': 1
+        'workers': 1
     })
 
     doc = document.get_document('mock')
@@ -37,7 +35,7 @@ class StoreTextTest(unittest.TestCase):
     _store_text.consume(doc, None)
 
     expected = 'local_data/unittests/text/17404a59-mock'
-    actual = doc.meta[u'text_file']
+    actual = doc.meta['text_file']
 
     self.assertEquals(expected, actual)
 

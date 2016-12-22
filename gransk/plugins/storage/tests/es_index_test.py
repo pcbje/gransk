@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+
 import unittest
 import logging
 
@@ -11,9 +13,9 @@ import gransk.plugins.storage.es_index as index_text
 
 
 logging.basicConfig(
-    format=u'[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
+    format='[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
     level=logging.INFO,
-    datefmt=u'%Y-%m-%d %H:%M:%S')
+    datefmt='%Y-%m-%d %H:%M:%S')
 
 
 class IndexTest(unittest.TestCase):
@@ -31,8 +33,8 @@ class IndexTest(unittest.TestCase):
     })
 
     doc = document.get_document('mock.txt')
-    doc.text = u'abcd mock-value efgh'
-    doc.entities.add(5, u'mock-type', u'mock-value')
+    doc.text = 'abcd mock-value efgh'
+    doc.entities.add(5, 'mock-type', 'mock-value')
 
     _index_text.consume(doc, None)
 
@@ -42,8 +44,8 @@ class IndexTest(unittest.TestCase):
 
   def test_document(self):
     expected_doc = {
-        u'_id': 'e0f1e9fe4a2be1e5601679f608632682',
-        u'_type': u'document', u'_source': {
+        '_id': 'e0f1e9fe4a2be1e5601679f608632682',
+        '_type': 'document', '_source': {
                 'status': 'unknown', 'parent': None,
                 'text': 'abcd mock-value efgh',
                 'tag': 'default', 'path': 'mock.txt',
@@ -51,7 +53,7 @@ class IndexTest(unittest.TestCase):
                 'doctype': 'unknown', 'filename': 'mock.txt', 'ext': 'txt',
                 'meta': {'added': 'mock-time', 'size': -1}
         },
-        u'_op_type': u'index', u'_index': u'gransk'}
+        '_op_type': 'index', '_index': 'gransk'}
 
     bulk = self._init()
 
@@ -64,11 +66,11 @@ class IndexTest(unittest.TestCase):
     bulk = self._init()
 
     expected_entity = {
-        u'_id': 'mock-value\x00mock-type', u'_type': u'entity',
-        u'_source': {
+        '_id': 'mock-value\x00mock-type', '_type': 'entity',
+        '_source': {
             'entity_id': 'mock-type', 'type': 'mock-value', 'value': 'mock-type'
         },
-        u'_op_type': u'index', u'_index': u'gransk'}
+        '_op_type': 'index', '_index': 'gransk'}
 
     actual_entity = bulk[1]
 
@@ -80,8 +82,8 @@ class IndexTest(unittest.TestCase):
     actual_in_doc = bulk[2]
 
     expected_in_doc = {
-        u'_id': '79f608632682\x00mock-type\x00mock-value\x005',
-        u'_type': u'in_doc', u'_source': {
+        '_id': '79f608632682\x00mock-type\x00mock-value\x005',
+        '_type': 'in_doc', '_source': {
             'raw_entity': (
                 '{"entity_id": "mock-type", "type": "mock-value",'
                 ' "value": "mock-type"}'),
@@ -90,7 +92,7 @@ class IndexTest(unittest.TestCase):
             'entity_type': 'mock-value', 'entity_value': 'mock-type',
             'doc_id': 'e0f1e9fe4a2be1e5601679f608632682'
         },
-        u'_op_type': u'index', u'_index': u'gransk'}
+        '_op_type': 'index', '_index': 'gransk'}
 
     self.assertEqual(sorted(expected_in_doc), sorted(actual_in_doc))
 
