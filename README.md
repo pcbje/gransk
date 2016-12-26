@@ -19,11 +19,20 @@ content extraction, Elasticsearch for data indexing, and dfVFS to unpack disk im
 3. Double click on the imported machine. (Hold shift to run in background)
 4. After a couple of seconds. open a web browser and go to [http://localhost:8084](http://localhost:8084)
 
-##### Using [Docker](https://www.docker.com):
+##### Using [Docker](https://www.docker.com) on Linux/Mac:
 
 ```
 curl -o docker-quickstart.sh -X GET https://raw.githubusercontent.com/pcbje/gransk/master/docker-quickstart.sh
 sh ./docker-quickstart.sh
+```
+
+##### Using [Docker](https://www.docker.com) on Windows:
+
+Type the following command in to powershell
+
+```
+Invoke-WebRequest https://raw.githubusercontent.com/pcbje/gransk/master/docker-quickstart.ps1 -Outfile docker-quickstart.ps1
+powershell -ExecutionPolicy ByPass -File docker-quickstart.ps1
 ```
 
 
