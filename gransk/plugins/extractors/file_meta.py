@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+# breaks http put
+# from __future__ import unicode_literals
 
 import re
 import os
@@ -59,6 +61,10 @@ class Subscriber(abstract_subscriber.Subscriber):
     }
 
     tika_url = self.config.get(helper.TIKA_META)
+
+    if not tika_url:
+      tika_url = self.config.get(helper.TIKA_HOST)
+
     connection = self.config[helper.INJECTOR].get_http_connection(tika_url)
     payload.seek(0)
     connection.request('PUT', '/meta', payload.read(), headers)

@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+# breaks http put
+# from __future__ import unicode_literals
 
 import os
 import subprocess
@@ -34,7 +36,7 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     self.max_size = config.get(helper.TIKA_MAX_SIZE, 1024 * 1024 * 64)
     self.ocr_languages = config.get(helper.OCR_LANGUAGES)
-    self.detect_scanned_pdf = config.get(helper.DETECT_SCANNED_PDF, True)
+    self.detect_scanned_pdf = config.get(helper.DETECT_SCANNED_PDF, False)
 
     self.tmp_root = os.path.join(config[helper.DATA_ROOT], 'files', '.tmp')
     self.wid = config[helper.WORKER_ID]
@@ -52,7 +54,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       return
 
     filename = os.path.basename(doc.path)
-    content_type = doc.meta['Content-Type']
+    content_type = doc.meta.get('Content-Type', 'application/octet-stream')
 
     payload.seek(0)
     data = payload.read()
@@ -86,10 +88,12 @@ class Subscriber(abstract_subscriber.Subscriber):
     if self.ocr_languages:
         headers['X-Tika-OCRLanguage'] = self.ocr_languages
 
-    connection = self.config[helper.INJECTOR].get_http_connection()
+    host = self.config.get(helper.TIKA_HOST)
+    connection = self.config[helper.INJECTOR].get_http_connection(host)
     connection.request('PUT', '/tika', data, headers)
     response = connection.getresponse()
-    text = response.read().strip().decode('utf-8')
+    text = response.read().strip()
+    text = text.decode('utf-8')
     response.close()
     doc.text = text
 
