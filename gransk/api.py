@@ -25,10 +25,6 @@ import gransk.core.abstract_subscriber as abstract_subscriber
 logging.getLogger('urllib3').setLevel(logging.ERROR)
 logging.getLogger('requests').setLevel(logging.ERROR)
 logging.getLogger('polyglot').setLevel(logging.ERROR)
-logging.basicConfig(
-      format='[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
-      level=logging.INFO,
-      datefmt='%Y-%m-%d %H:%M:%S')
 
 LOGGER = logging.getLogger('MAIN')
 
@@ -130,7 +126,7 @@ class API(object):
     except Exception as err:
        print (">>", err)
 
-    connection = self.config['injector'].get_http_connection('%s:%s' % (self.config['es_host'][0], 9200))
+    connection = self.config['injector'].get_http_connection(self.config['es_host'][0], 9200)
     connection.request('DELETE', '/gransk', '', {})
 
     if os.path.exists(self.config[helper.DATA_ROOT]):
