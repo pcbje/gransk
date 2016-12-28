@@ -246,7 +246,7 @@ app.directive('dropzone', function($timeout) {
               window.onbeforeunload = null;
               setTimeout(function() {
                 location.reload();
-              }, 1500);
+              }, 2000); // wait until we know es bulk is committed.
             }
           });
         }

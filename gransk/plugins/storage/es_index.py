@@ -53,7 +53,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     while True:
       while len(bulk) < 50 and not stop:
         try:
-          obj = self.elastic_bulk.get(timeout=3)
+          obj = self.elastic_bulk.get(timeout=2)
         except queue.Empty:
           break
 
