@@ -38,9 +38,6 @@ from flask import request, Response
 _globals = {}
 
 def check_auth(username, password):
-  if not _globals['config'].get('auth'):
-    return True
-
   return username == _globals['config']['auth']['user'] and password == _globals['config']['auth']['pass']
 
 def authenticate():
@@ -52,6 +49,9 @@ def authenticate():
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        if not _globals['config'].get('auth'):
+          return f(*args, **kwargs)
+
         auth = request.authorization
         if not auth or not check_auth(auth.username, auth.password):
           if _globals.get('test'):
