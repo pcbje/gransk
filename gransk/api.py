@@ -8,6 +8,7 @@ import time
 import json
 import hashlib
 import logging
+import threading
 import traceback
 import yaml
 import os
@@ -113,12 +114,18 @@ class API(object):
     self.pipeline = pipeline.build_pipeline(self.config)
     self.entrypoint = Subscriber(self.pipeline)
     self.entrypoint.setup(self.config)
+    self.write_lock = threading.Lock()
 
   def add_file(self, doc, file_object):
-    return self.entrypoint.consume(doc, file_object=file_object)
+    with self.write_lock:
+      return self.entrypoint.consume(doc, file_object=file_object)
 
   def clear_all(self):
     """Clear all processed data."""
+    with self.write_lock:
+      self._clear_all()
+
+  def _clear_all(self):
     try:
         if os.path.exists(self.config[helper.DATA_ROOT]):
           shutil.rmtree(self.config[helper.DATA_ROOT])

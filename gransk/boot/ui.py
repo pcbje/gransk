@@ -230,5 +230,5 @@ if __name__ == '__main__':
   #context = ('/etc/letsencrypt/live/gransk.com/cert.pem', '/etc/letsencrypt/live/gransk.com/privkey.pem')
   context = None
 
-  app.run(host=args.host, port=args.port, debug=args.debug, threaded=True , ssl_context=context)
+  app.run(host=args.host, port=args.port, debug=args.debug, threaded=True, ssl_context=context)
   _globals['gransk'].pipeline.stop()
