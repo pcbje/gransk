@@ -79,12 +79,12 @@ class Subscriber(abstract_subscriber.Subscriber):
       os.remove(tmp_path)
 
     headers = {
-        'Content-Disposition': 'attachment; filename=%s' % filename,
-        'Content-type': content_type,
+      'Content-Disposition': 'attachment; filename=%s' % filename,
+      'Content-type': content_type,
     }
 
     if self.ocr_languages:
-        headers['X-Tika-OCRLanguage'] = self.ocr_languages
+      headers['X-Tika-OCRLanguage'] = self.ocr_languages
 
     connection = self.config[helper.INJECTOR].get_http_connection()
     connection.request('PUT', '/tika', data, headers)
