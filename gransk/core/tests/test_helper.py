@@ -157,7 +157,7 @@ class MockInjector(object):
   def get_worker(self):
     return self.worker
 
-  def get_http_connection(self, url=None):
+  def get_http_connection(self, url, port=None):
     return MockHttpConnection(self.response_text)
 
   def get_elasticsearch(self):

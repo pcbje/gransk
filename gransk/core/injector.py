@@ -31,17 +31,20 @@ class Injector(object):
     """
     self.config = config
 
-  def get_http_connection(self, url=None):
+  def get_http_connection(self, host, port=None):
     """
     Get a HTTP connection to the host. Currently only used by Tika.
 
     :returns: ``six.moves.http_client.HTTPConnection``
     """
-    if not url:
-      host = self.config['tika_host'][random.randint(0, len(self.config['tika_host'])-1)]
-      url = '%s:%s' % (host, self.config.get(helper.TIKA_PORT, 9998))
 
-    return six.moves.http_client.HTTPConnection(url)
+    if type(host) == list:
+      host = host[random.randint(0, len(host)-1)]
+
+    if not port:
+      port = self.config.get(helper.TIKA_PORT, 9998)
+
+    return six.moves.http_client.HTTPConnection('%s:%s' % (host, port))
 
   def get_elasticsearch(self):
     """
