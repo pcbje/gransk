@@ -80,7 +80,7 @@ class Subscriber(abstract_subscriber.Subscriber):
   def create_mapping(self):
     """Create index mappig in Elasticsearch cluster."""
     LOGGER.info(self.elastic.indices.create(index='gransk', ignore=400, body={
-        "settings": self.config.get(helper.ES_SETTINGS, {
+        "settings": self.config.get(helper.ES_INDEX, {
             "number_of_shards": 5,
             "analysis": {
                 "analyzer": {
