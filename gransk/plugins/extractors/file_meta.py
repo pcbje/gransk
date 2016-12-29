@@ -7,11 +7,11 @@ import re
 import os
 import json
 import subprocess
-
+import six
+from six.moves.urllib.parse import quote as url_quote
 
 import gransk.core.helper as helper
 import gransk.core.abstract_subscriber as abstract_subscriber
-import six
 
 
 class Subscriber(abstract_subscriber.Subscriber):
@@ -55,7 +55,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     filename = os.path.basename(doc.path)
     headers = {
         'Accept': 'application/json',
-        'Content-Disposition': 'attachment; filename=%s' % filename
+        'Content-Disposition': 'attachment; filename=%s' % url_quote(filename)
     }
 
     tika_url = self.config.get(helper.TIKA_META)

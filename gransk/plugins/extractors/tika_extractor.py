@@ -5,6 +5,7 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 import subprocess
+from six.moves.urllib.parse import quote as url_quote
 
 import gransk.core.abstract_subscriber as abstract_subscriber
 import gransk.core.helper as helper
@@ -79,7 +80,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       os.remove(tmp_path)
 
     headers = {
-      'Content-Disposition': 'attachment; filename=%s' % filename,
+      'Content-Disposition': 'attachment; filename=%s' % url_quote(filename),
       'Content-type': content_type,
     }
 
