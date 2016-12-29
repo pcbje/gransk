@@ -71,7 +71,7 @@ class Subscriber(abstract_subscriber.Subscriber):
           return
 
       if not file_object:
-        file_object = open(doc.path)
+        file_object = open(doc.path, "rb")
 
       self.produce(helper.EXTRACT_META, doc, file_object)
       self.produce(helper.PROCESS_FILE, doc, file_object)

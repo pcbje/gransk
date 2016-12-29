@@ -28,7 +28,7 @@ class UnpackDiskimageTest(unittest.TestCase):
     doc = document.get_document(test_helper.get_test_path('dummy.E01'))
     doc.docid = '4321'
 
-    with open(doc.path) as inp:
+    with open(doc.path, "rb") as inp:
       self.detector.consume(doc, inp)
 
     actual = [doc.path for doc, _ in self.mock_pipe.consumer.produced]
@@ -45,7 +45,7 @@ class UnpackDiskimageTest(unittest.TestCase):
     doc = document.get_document('/data/cfreds_2015_data_leakage_pc.E01')
     doc.docid = '4321'
 
-    with open(doc.path) as inp:
+    with open(doc.path, "rb") as inp:
       self.detector.consume(doc, inp)
 
 

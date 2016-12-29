@@ -78,7 +78,7 @@ class Subscriber(abstract_subscriber.Subscriber):
         path = os.path.join(folder, filename)
         new_doc = document.get_document(path, parent=doc)
         new_doc.tag = tag
-        with open(path) as file_object:
+        with open(path, "rb") as file_object:
           self.produce(helper.EXTRACT_META, new_doc, file_object)
           self.produce(helper.PROCESS_FILE, new_doc, file_object)
           doc.children += 1
