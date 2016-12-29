@@ -72,14 +72,17 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     response = connection.getresponse()
 
-    result = json.loads(response.read().decode('utf-8'))
+    response_text = response.read().decode('utf-8')
+
+    result = json.loads(response_text)
 
     response.close()
 
     return result
 
   def __get_mime_type(self, payload):
-    payload.seek(0)
+    # This method needs testing/changes (https://thraxil.org/users/anders/posts/2008/03/13/Subprocess-Hanging-PIPE-is-your-enemy/)
+    """payload.seek(0)
     cmd = ('file', '--brief', '--mime-type', '-')
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, _ = proc.communicate(payload.read())
@@ -88,7 +91,9 @@ class Subscriber(abstract_subscriber.Subscriber):
     if proc.returncode != 0:
       return None
 
-    return out.strip().decode("utf-8")
+    return out.strip().decode("utf-8")"""
+
+    return None
 
   def consume(self, doc, payload):
     """
@@ -113,6 +118,12 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     if 'Content-Type' not in meta:
       meta['Content-Type'] = self.__get_mime_type(payload)
+
+    if not meta['Content-Type']:
+      meta['Content-Type'] = 'unknown'
+
+    if type(meta['Content-Type']) == list:
+      meta['Content-Type'] = '\x00'.join(meta['Content-Type'])
 
     for match in self.typepattern.finditer(meta['Content-Type']):
       doc.set_type(match.lastgroup)
