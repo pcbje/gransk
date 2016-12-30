@@ -211,7 +211,7 @@ def setup(args, pipeline, runmod, injector):
       level=logging.INFO,
       datefmt='%Y-%m-%d %H:%M:%S')
 
-  _globals['gransk'] = gransk.api.API(injector)
+  _globals['gransk'] = gransk.api.API(injector, config_path=args.config)
   _globals['config'] = _globals['gransk'].config
 
   if pipeline:

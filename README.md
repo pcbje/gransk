@@ -140,6 +140,7 @@ pip install -r utils/dfvfs-requirements.txt
 pip install -r requirements.txt
 python setup.py install
 python setup.py download
+cp config.default.yml config.yml
 ```
 
 

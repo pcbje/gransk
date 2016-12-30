@@ -15,7 +15,7 @@ import gransk.core.tests.test_helper as test_helper
 class FindEntitiesTest(unittest.TestCase):
 
   def test_config(self):
-    with open('config.yml') as inp:
+    with open('config.default.yml') as inp:
       config = yaml.load(inp.read())
 
     _find_entities = find_entities.Subscriber(test_helper.get_mock_pipeline([]))

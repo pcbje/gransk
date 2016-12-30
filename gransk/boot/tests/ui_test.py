@@ -74,7 +74,7 @@ class MockRunMod(object):
 class UiTest(unittest.TestCase):
 
   def setUp(self):
-    gransk.boot.ui.setup({}, MockPipelineMod.pipe, MockRunMod, test_helper.MockInjector())
+    gransk.boot.ui.setup(test_helper.MockArgs('config.default.yml'), MockPipelineMod.pipe, MockRunMod, test_helper.MockInjector())
     gransk.boot.ui._globals['test'] = True
     self.app = gransk.boot.ui.app.test_client()
     self.pipe = MockPipelineMod.pipe

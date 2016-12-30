@@ -12,6 +12,7 @@ from io import BytesIO
 
 from six import text_type as unicode
 
+MockArgs = namedtuple('MockArgs', ['config'])
 
 class MockPipeline(object):
 

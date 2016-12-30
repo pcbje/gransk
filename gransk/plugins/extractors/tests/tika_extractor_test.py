@@ -30,7 +30,7 @@ class TikaExtractorTest(unittest.TestCase):
         b'This is an unstructured document containing the \nidentifier '
         b'"193.34.2.1" (ip address), stored as a PDF document.')
 
-    with open('config.yml') as inp:
+    with open('config.default.yml') as inp:
       config = yaml.load(inp.read())
 
     config[helper.DATA_ROOT] = 'local_data'

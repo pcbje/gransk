@@ -30,13 +30,13 @@ class RunTest(unittest.TestCase):
     self.assertEquals('mock', parsed_args.path)
 
   def test_load_config(self):
-    parsed_args = gransk.boot.run.parse_args(['mock'])
+    parsed_args = gransk.boot.run.parse_args(['-c', 'config.default.yml', 'mock'])
     gransk_api = gransk.boot.run.load_config(parsed_args)
     self.assertNotEqual(0, len(gransk_api.config['subscribers']))
 
   def test_run(self):
     inject = test_helper.MockInjector()
-    gransk.boot.run.run(inject, ['mock'])
+    gransk.boot.run.run(inject, ['-c', 'config.default.yml', 'mock'])
     self.assertEquals(True, inject.worker.called)
 
 

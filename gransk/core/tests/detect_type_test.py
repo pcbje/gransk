@@ -29,7 +29,7 @@ class DetectTypeTest(unittest.TestCase):
 
     detector = detect_type.Subscriber(mock_pipeline)
 
-    with open('config.yml') as inp:
+    with open('config.default.yml') as inp:
       detector.setup(yaml.load(inp.read()))
 
     doc = document.get_document(filename)
