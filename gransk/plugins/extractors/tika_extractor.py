@@ -4,6 +4,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import os
+import logging
 import subprocess
 from six.moves.urllib.parse import quote as url_quote
 
@@ -90,9 +91,15 @@ class Subscriber(abstract_subscriber.Subscriber):
     connection = self.config[helper.INJECTOR].get_http_connection()
     connection.request('PUT', '/tika', data, headers)
     response = connection.getresponse()
-    text = response.read().strip().decode('utf-8')
-    response.close()
-    doc.text = text
+
+    try:
+      if response.status >= 400:
+        logging.error('tika error %d (%s): %s', response.status,
+                      response.reason, doc.path)
+      else:
+        doc.text = response.read().strip().decode('utf-8')
+    finally:
+      response.close()
 
   @classmethod
   def _is_pdf_scanned(cls, path):

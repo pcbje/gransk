@@ -27,6 +27,8 @@ class Subscriber(abstract_subscriber.Subscriber):
     :type config: ``dict``
     """
     self.config = config
+    self.tmp_root = os.path.join(config[helper.DATA_ROOT], 'files', '.tmp')
+
     typecache = {}
     media_path = os.path.join(
         config[helper.CODE_ROOT], 'utils', 'media_types.txt')
@@ -55,9 +57,12 @@ class Subscriber(abstract_subscriber.Subscriber):
   def __extract_metadata(self, doc, payload):
     filename = os.path.basename(doc.path)
     headers = {
-        'Accept': 'application/json',
-        'Content-Disposition': 'attachment; filename=%s' % url_quote(filename)
+      'Accept': 'application/json',
+      'Content-Disposition': 'attachment; filename=%s' % url_quote(filename)
     }
+
+    if doc.meta['Content-Type']:
+      headers['Content-Type'] = doc.meta['Content-Type']
 
     tika_url = self.config.get(helper.TIKA_META)
     connection = self.config[helper.INJECTOR].get_http_connection(tika_url)
@@ -66,28 +71,47 @@ class Subscriber(abstract_subscriber.Subscriber):
     payload.seek(0)
 
     response = connection.getresponse()
-    response_data = response.read()
-    response.close()
+
+    try:
+      if response.status >= 400:
+        logging.error('tika error %d (%s): %s', response.status,
+                      response.reason, doc.path)
+        return {}
+      response_data = response.read()
+    finally:
+      response.close()
 
     try:
       result = json.loads(response_data.decode('utf-8'))
     except (ValueError, UnicodeDecodeError):
-      logging.warning('invalid response from tika for %s', doc.path)
+      logging.error('invalid response from tika for %s', doc.path)
       result = {}
 
     return result
 
-  def __get_mime_type(self, payload):
+  def __get_mime_type(self, doc, payload):
+    tmp_path = os.path.join(self.tmp_root, '%s-%s.%s' %
+      (self.wid, doc.docid[0:8], doc.ext))
+
+    if not os.path.exists(self.tmp_root):
+      os.makedirs(self.tmp_root)
+
     payload.seek(0)
-    cmd = ('file', '--brief', '--mime-type', '-')
+    with open(tmp_path, 'wb') as out:
+      out.write(payload.read())
+    payload.seek(0)
+
+    cmd = ('file', '--brief', '--mime-type', tmp_path)
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, _ = proc.communicate(payload.read())
-    payload.seek(0)
+    out, _ = proc.communicate()
+
+    if os.path.exists(tmp_path):
+      os.remove(tmp_path)
 
     if proc.returncode != 0:
       return None
 
-    return out.strip().decode("utf-8")
+    return out.strip().decode('utf-8')
 
   def consume(self, doc, payload):
     """
@@ -98,27 +122,29 @@ class Subscriber(abstract_subscriber.Subscriber):
     :type doc: ``gransk.core.document.Document``
     :type payload: ``file``
     """
-    meta = {}
-
     max_size = self.config.get(helper.MAX_FILE_SIZE, 0)
 
     if max_size > 0 and doc.meta['size'] > max_size:
+      doc.meta['Content-Type'] = 'application/octet-stream'
       return
+
+    mime_type = self.__get_mime_type(doc, payload)
+
+    if mime_type:
+      doc.meta['Content-Type'] = mime_type
 
     try:
       meta = self.__extract_metadata(doc, payload)
     except Exception as err:
-      doc.meta['meta_error'] = six.text_type(err)
       logging.exception('could not extract metadata from %s: %s', doc.path, err)
+      doc.meta['meta_error'] = six.text_type(err)
+      meta = {}
 
-    if not meta:
+    if meta:
+      for key, value in meta.items():
+        doc.meta[key.replace('.', '_').replace(':', '_')] = value
+    else:
       doc.meta['meta_error'] = 'unable to extract metadata using tika'
 
-    if 'Content-Type' not in meta:
-      meta['Content-Type'] = self.__get_mime_type(payload)
-
-    for match in self.typepattern.finditer(meta['Content-Type']):
+    for match in self.typepattern.finditer(doc.meta['Content-Type']):
       doc.set_type(match.lastgroup)
-
-    for key, value in meta.items():
-      doc.meta[key.replace('.', '_').replace(':', '_')] = value
