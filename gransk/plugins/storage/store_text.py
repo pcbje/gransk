@@ -33,7 +33,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       try:
         os.makedirs(self.root)
       except Exception as err:
-        LOGGER.debug("could not create dir %s: %s", self.root, err)
+        LOGGER.exception("could not create dir %s: %s", self.root, err)
 
   def consume(self, doc, payload):
     """

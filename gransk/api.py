@@ -9,7 +9,6 @@ import json
 import hashlib
 import logging
 import threading
-import traceback
 import yaml
 import os
 import sys
@@ -79,8 +78,9 @@ class Subscriber(abstract_subscriber.Subscriber):
       file_object.close()
 
     except Exception as err:
+      LOGGER.exception('could not process %s: %s', doc.path, err)
+      doc.status = 'error'
       doc.meta['gransk_error'] = six.text_type(err)
-      traceback.print_exc(file=sys.stdout)
 
 
 class API(object):
@@ -135,7 +135,7 @@ class API(object):
         os.makedirs(os.path.join(self.config[helper.DATA_ROOT], 'archives'))
         os.makedirs(os.path.join(self.config[helper.DATA_ROOT], 'archives', '.tmp'))
     except Exception as err:
-       print (">>", err)
+       LOGGER.error("could not clear data: %s", err)
 
     connection = self.config['injector'].get_http_connection('%s:%s' % (self.config['es_host'][0], 9200))
     connection.request('DELETE', '/gransk', '', {})

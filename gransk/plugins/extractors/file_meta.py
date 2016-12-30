@@ -5,6 +5,7 @@ from __future__ import absolute_import, unicode_literals
 
 import re
 import os
+import logging
 import json
 import subprocess
 import six
@@ -65,10 +66,14 @@ class Subscriber(abstract_subscriber.Subscriber):
     payload.seek(0)
 
     response = connection.getresponse()
-
-    result = json.loads(response.read().decode('utf-8'))
-
+    response_data = response.read()
     response.close()
+
+    try:
+      result = json.loads(response_data.decode('utf-8'))
+    except (ValueError, UnicodeDecodeError):
+      logging.warning('invalid response from tika for %s', doc.path)
+      result = {}
 
     return result
 
@@ -104,6 +109,10 @@ class Subscriber(abstract_subscriber.Subscriber):
       meta = self.__extract_metadata(doc, payload)
     except Exception as err:
       doc.meta['meta_error'] = six.text_type(err)
+      logging.exception('could not extract metadata from %s: %s', doc.path, err)
+
+    if not meta:
+      doc.meta['meta_error'] = 'unable to extract metadata using tika'
 
     if 'Content-Type' not in meta:
       meta['Content-Type'] = self.__get_mime_type(payload)

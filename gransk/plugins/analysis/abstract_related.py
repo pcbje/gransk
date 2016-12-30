@@ -77,7 +77,7 @@ class Subscriber(abstract_subscriber.Subscriber):
             else:
               self.buckets[key] = value
         except:
-          pass
+          logging.warning('could not load related_%s data', self.NAME)
 
   def stop(self):
     """Write data to file."""

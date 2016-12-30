@@ -72,10 +72,11 @@ class Subscriber(abstract_subscriber.Subscriber):
         self.produce(helper.PROCESS_FILE, newdoc, file_object)
         doc.children += 1
       except IOError as err:
-        LOGGER.debug('could not read path "%s": %s', path, err)
+        LOGGER.exception('could not read path "%s": %s', path, err)
         doc.meta['diskimage_read_error'] = six.text_type(err)
         return None
       except Exception as err:
+        LOGGER.exception('could not process file: %s', path)
         doc.meta['diskimage_other_read_error'] = six.text_type(err)
       finally:
         if file_object:
@@ -95,5 +96,5 @@ class Subscriber(abstract_subscriber.Subscriber):
     try:
       diskreader.Read(doc.path.encode('utf-8'))
     except Exception as err:
-      LOGGER.debug('could not read image: %s', err)
+      LOGGER.exception('could not read image: %s', err)
       doc.meta['diskimage_error'] = six.text_type(err)

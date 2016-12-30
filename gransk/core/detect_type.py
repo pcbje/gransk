@@ -4,7 +4,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import logging
-import traceback
 import sys
 import os
 import six
@@ -92,8 +91,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       self.produce(helper.RUN_PIPELINE, doc, None)
 
     except Exception as err:
-      traceback.print_exc(file=sys.stdout)
-      LOGGER.warning('could not process %s: %s', doc.path, err)
+      LOGGER.exception('could not process %s: %s', doc.path, err)
       doc.status = 'error'
       doc.meta['gransk_error'] = six.text_type(err)
       self.produce(helper.ERRORED_FILE, doc, payload)

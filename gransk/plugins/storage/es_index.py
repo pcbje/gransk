@@ -66,7 +66,7 @@ class Subscriber(abstract_subscriber.Subscriber):
         try:
           self.helper.bulk(self.elastic, bulk)
         except Exception as err:
-          LOGGER.error('es index error: %s', err)
+          LOGGER.exception('es index error: %s', err)
         bulk = []
 
       if stop:
