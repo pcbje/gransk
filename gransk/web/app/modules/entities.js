@@ -181,18 +181,11 @@ modules.service('entity', function($cookies, config, client, aggs, query, pageco
 
 modules.directive('entitynetwork', function($http) {
   var colors = "#369EAD #7F6084 #86B402 #A2D1CF #C8B631 #6DBCEB #52514E #4F81BC #A064A1 #F79647".split(' ');
-  var graph = Viva.Graph.graph();
-  var graphics = Viva.Graph.View.svgGraphics();
+
   var nodeSize = 10;
   var renderer;
   var color_cache = {};
-  var layout = Viva.Graph.Layout.forceDirected(graph, {
-    springLength : 30,
-    springCoeff : 0.0008,
-    dragCoeff : 0.009,
-    gravity : -1.2,
-    thetaCoeff: 0.8
-});
+  var all, selected;
 
 
   return {
@@ -201,88 +194,76 @@ modules.directive('entitynetwork', function($http) {
       '  <div id="graph-controls">' +
       '    <input type="radio" ng-model="hops" value="1" id="hop-1" /> <label for="hop-1">1 hop</label>&nbsp;' +
       '    <input type="radio" ng-model="hops" value="2" id="hop-2" /> <label for="hop-2">2 hops</label>&nbsp;' +
-      '    <input type="radio" ng-model="hops" value="3" id="hop-3" /> <label for="hop-3">3 hops</label>&nbsp;' +
-      '    <a href ng-show="running" ng-click="stop()">Stop</a>' +
-      '    <a href ng-hide="running" ng-click="start()">Start</a>' +
+      '    <input type="radio" ng-model="hops" value="3" id="hop-3" /> <label for="hop-3">3 hops</label>&nbsp;|&nbsp;' +
+
+      '    <input type="button" value="Merge" ng-click="merge()" />' +
+      '    <input type="button" value="Split" ng-click="split()" />' +
+      '    <input type="button" value="Remove" ng-click="remove()" />' +
+      '    | <input type="button" value="Backbone" ng-click="_backbones()" />' +
+
       '  </div>' +
-      '  <div id="graph" ng-class="{\'active\':running}"></div>' +
+      '  <div id="graph"></div>' +
       '</div>',
     scope: {
       entity: '='
     },
     link: function(scope, element) {
       scope.hops = '1';
-      var timeout;
-
-      scope.running = false;
-
-      scope.stop = function() {
-        renderer.pause();
-        scope.running = false;
-      }
-
-      scope.start = function() {
-        renderer.resume();
-        scope.running = true;
-      }
-
-      graphics.node(
-        function(node) {
-          if (!(node.data.type in color_cache)) {
-            color_cache[node.data.type] = colors[Object.keys(color_cache).length];
-          }
-
-          var fill = node.data.entity_id === scope.entity._source.entity_id ? '#ff0000' : color_cache[node.data.type];
-          var ui = Viva.Graph.svg('g');
-          var svgText = Viva.Graph.svg('text').attr('y', '-4px').text(node.data.value).attr('font-size', 9);
-          var img = Viva.Graph.svg('circle').attr('r', nodeSize / 2).attr('fill', fill).attr('cx', nodeSize / 2).attr('cy', nodeSize / 2);
-          ui.append(svgText);
-          ui.append(img);
-
-          return ui;
-        }).placeNode(
-        function(nodeUI, pos) {
-          nodeUI.childNodes[0].attr('x', (nodeUI.childNodes[0].getBBox().width / 2) * -1 + nodeSize / 2);
-          nodeUI.attr('transform', 'translate(' + (pos.x - nodeSize / 2) +
-            ',' + (pos.y - nodeSize / 2) + ')');
-        });
-
       var seed = null;
 
+      scope.merge = function() {
+        ggraph.merge(all);
+      }
+
+      scope.remove = function() {
+        var s = [];
+        for (var k in selected) {
+          s.push({id: k})
+        }
+        ggraph.remove(s);
+      }
+
+      scope.split = function() {
+        ggraph.split(all);
+      }
+
+      scope._backbones = function(e) {
+        var res = simmelian.filter(converted.all_links, 0.75);
+        ggraph.filter_links(res);
+      };
+
       scope.$watchCollection('[entity, hops]', function() {
-        graph.clear();
-
-        try {
-          renderer.dispose();
-        } catch (e) {}
-
-        renderer = Viva.Graph.View.renderer(graph, {
-          container: angular.element(element.children()[0]).children()[1],
-          graphics: graphics,
-          layout : layout
+        ggraph.init(angular.element(element.children()[0]).children()[1]);
+        ggraph.on_select(function() {
+          all = selection.all();
+          selected = selection.selected();
         });
 
         if (!scope.entity) return;
-
 
         seed = scope.entity._source.entity_id;
         $http.get('/network?hops=' + scope.hops + '&entity_id=' + scope.entity._source.entity_id).then(function(network) {
           if (network.data.seed === undefined || network.data.seed.toLowerCase() !== seed.toLowerCase()) return;
 
-          scope.network = network;
-          graph.clear();
+          scope.network = {
+            nodes: [],
+            links: []
+          };
 
-          for (var node in network.data.nodes) {
-            network.data.nodes[node].entity_id = node;
-            graph.addNode(node, network.data.nodes[node]);
+          for (var nid in network.data.nodes) {
+            scope.network.nodes.push({id: nid, type: network.data.nodes[nid].type, id: network.data.nodes[nid].value})
           }
 
           network.data.links.map(function(link) {
-            graph.addLink(link[0], link[1], link[2]);
-          });
+            scope.network.links.push({
+              source: network.data.nodes[link[0]].value,
+              target: network.data.nodes[link[1]].value,
+              value: 1
+            })
+          })
 
-          renderer.run();
-          scope.running = true;
+          converted = ggraph.convert(scope.network);
+          ggraph.draw(converted);
         });
       }, true);
     }

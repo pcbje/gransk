@@ -10,7 +10,8 @@
     <script src="/static/lib/dropzone.js"></script>
     <script src="/static/lib/d3.min.js"></script>
     <script src="/static/lib/d3pie.min.js"></script>
-    <script src="/static/lib/vivagraph.min.js"></script>
+    <script src="/static/lib/ggraph.min.js"></script>
+    <link href="/static/lib/ggraph.min.css" media="all" rel="stylesheet" />
     <script src="/static/lib/svg.min.js"></script>
     <script src="/static/modules/automagic.js"></script>
     <script src="/static/modules/gransk.js"></script>
@@ -33,7 +34,7 @@
       <a href="#/documents" ng-class="{'active':mode==='documents'}">Documents (<span ng-bind="counts.documents"></span>)</a>
       <a href="#/entities" ng-class="{'active':mode==='entities'}">Entities (<span ng-bind="counts.entities"></span>)</a>
       <a href="#/latest" ng-class="{'active':mode==='latest'}">Latest</a>
-      
+
       <form id="query" ng-submit="form_submit_query(query_string)">
         <a ng-show="query_string.length>0" href="" ng-click="query_string='';form_submit_query(query_string)"><i class="fa fa-times" aria-hidden="true"></i> Clear</a>
         <input type="text" placeholder="Query..." ng-class="{'active':query_string.length>0}" id="query_string" ng-model="query_string" />

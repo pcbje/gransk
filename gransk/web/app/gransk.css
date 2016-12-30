@@ -95,6 +95,10 @@ input[type="button"] {
   display: none;
 }
 
+input[type="button"] {  
+  display: inline-block;;
+}
+
 #content-container {
   position: relative;
   top: 40px;
@@ -344,6 +348,8 @@ table tr:nth-child(odd) td {
   background-color: #f6f6f6;
   border: 1px solid #ccc;
   border-radius: 5px;
+  height: calc(100vh - 210px);
+
 }
 
 #graph svg {
@@ -359,10 +365,6 @@ table tr:nth-child(odd) td {
 
 #graph-controls * {
 vertical-align: middle;
-}
-
-#graph.active line {
-  display: none;
 }
 
 .picture-container {
@@ -696,10 +698,6 @@ td.text-right {
 
 table.aggregation {
   margin-top: 10px;
-}
-
-#graph line {
-  opacity: 0.5;
 }
 
 .live_query, .live-doc {
