@@ -275,7 +275,7 @@ describe("entities", function() {
 
       $httpBackend.flush();
 
-      expect(element.html()).toContain('<svg>');
+      expect(element.html()).toContain('<svg ');
       expect(element.html()).toContain('<g ');
       expect(element.html()).toContain('<circle ');
     });
