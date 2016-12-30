@@ -8,28 +8,17 @@ from __future__ import absolute_import, unicode_literals
 import os
 import argparse
 import logging
-import six.moves.http_client
-import shutil
 import sys
-
-import yaml
-
-import gransk.core.helper as helper
-import gransk.api
 
 from multiprocessing import Queue, Process
 from six.moves.queue import Empty
 import time
-import traceback
-import logging
-import os
-import sys
 import glob
-import six
 from six.moves import range
 
 from tqdm import tqdm
 
+import gransk.api
 import gransk.core.compat as _
 import gransk.core.file_collector as collector
 import gransk.core.pipeline as pipeline

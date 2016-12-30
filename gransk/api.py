@@ -5,13 +5,10 @@ from __future__ import unicode_literals
 
 import requests
 import time
-import json
-import hashlib
 import logging
 import threading
 import yaml
 import os
-import sys
 import shutil
 
 import six.moves.http_client

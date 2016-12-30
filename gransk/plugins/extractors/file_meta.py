@@ -28,6 +28,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     """
     self.config = config
     self.tmp_root = os.path.join(config[helper.DATA_ROOT], 'files', '.tmp')
+    self.wid = config[helper.WORKER_ID]
 
     typecache = {}
     media_path = os.path.join(

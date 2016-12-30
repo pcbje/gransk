@@ -9,12 +9,10 @@ import argparse
 import os
 import logging
 import json
-import shutil
-import time
+from functools import wraps
 import requests
 
-from flask import Flask, Response, render_template, request, abort
-import yaml
+from flask import Flask, Response, request, abort
 
 import gransk.api
 import gransk.core.helper as helper
@@ -30,9 +28,6 @@ app = Flask(
     static_url_path='/static',
     static_folder=os.path.join(_root, 'gransk', 'web', 'app'))
 
-
-from functools import wraps
-from flask import request, Response
 
 _globals = {}
 
@@ -115,6 +110,7 @@ def get_file():
 
   with open(file_path, 'rb') as inp:
     return Response(inp.read(), mimetype=mediatype, status=200)
+
 
 @app.route('/search')
 def search():
