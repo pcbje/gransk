@@ -14,3 +14,4 @@ pyenv
 pyenv*
 __pycache__
 mock-travis.sh
+config.yml
