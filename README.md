@@ -138,9 +138,9 @@ virtualenv pyenv
 source pyenv/bin/activate
 pip install -r utils/dfvfs-requirements.txt
 pip install -r requirements.txt
+cp config.default.yml config.yml
 python setup.py install
 python setup.py download
-cp config.default.yml config.yml
 ```
 
 
