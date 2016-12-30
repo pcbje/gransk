@@ -6,6 +6,8 @@ from __future__ import absolute_import, unicode_literals
 import os
 import logging
 
+from werkzeug import secure_filename
+
 import gransk.core.abstract_subscriber as abstract_subscriber
 import gransk.core.helper as helper
 
@@ -46,7 +48,8 @@ class Subscriber(abstract_subscriber.Subscriber):
     if doc.ext not in self.copy:
       return
 
-    new_filename = '%s-%s' % (doc.docid[0:8], os.path.basename(doc.path))
+    new_filename = '%s-%s' % \
+      (doc.docid[0:8], secure_filename(os.path.basename(doc.path)))
 
     ext_root = os.path.join(self.root, doc.ext)
 
