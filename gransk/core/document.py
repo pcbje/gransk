@@ -10,6 +10,8 @@ import re
 
 from six import text_type as unicode
 
+from werkzeug import secure_filename
+
 
 class Entities(object):
   """Class for a set of entities found within documents."""
@@ -142,7 +144,7 @@ class Document(object):
     }
 
 
-def get_document(path, parent=None):
+def get_document(path, parent=None, need_secure_path=None):
   """
   Create a new document object from the given path.
 
@@ -150,25 +152,31 @@ def get_document(path, parent=None):
   :param parent: Parent document (e.g. diskimage or archive).
   :returns: ``gransk.core.Document``
   """
-  if isinstance(path, unicode):
-    bpath, upath = path.encode('utf-8'), path
-  else:
-    bpath, upath = path, path.decode('utf-8')
+  if isinstance(path, bytes):
+    path = path.decode('utf-8')
+
+  original_path = path
+
+  if need_secure_path:
+    path = secure_filename(path)
+
+    if not path:
+      path = 'unnamed'
 
   doc = Document()
-  doc.path = upath
+  doc.path = path
 
-  if os.path.dirname(doc.path):
-    doc.meta['directory'] = os.path.dirname(doc.path)
+  if os.path.dirname(path):
+    doc.meta['directory'] = os.path.dirname(path)
 
   digest = hashlib.md5()
 
-  digest.update(bpath)
+  digest.update(path.encode('utf-8'))
 
   doc.docid = digest.hexdigest()
 
-  _, ext = os.path.splitext(doc.path)
-  doc.ext = ext.lstrip('.').lower() or 'none'
+  _, ext = os.path.splitext(original_path)
+  doc.ext = secure_filename(ext.lstrip('.').lower() or 'none')
 
   doc.parent = parent
 

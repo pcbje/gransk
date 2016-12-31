@@ -78,8 +78,9 @@ def upload():
   _file = request.files.get('file')
 
   doc = document.get_document(
-      secure_filename(_file.filename),
-      parent=document.get_document('root'))
+      _file.filename,
+      parent=document.get_document('root'),
+      need_secure_path=True)
 
   doc.tag = 'upload'
 
