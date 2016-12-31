@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import division, absolute_import, unicode_literals
 
 import os
 import logging
@@ -121,8 +121,13 @@ class Subscriber(abstract_subscriber.Subscriber):
     if len(set(x['page'] for x in images_info)) != page_count:
       return False
 
-    if len(set((x['width'], x['height']) for x in images_info
-               if x['type'] == 'image')) != 1:
+    size_on_page_x = [int(x['width']) / int(x['x-ppi'])
+                      for x in images_info if x['type'] == 'image']
+    size_on_page_y = [int(x['height']) / int(x['y-ppi'])
+                      for x in images_info if x['type'] == 'image']
+
+    if max(max(size_on_page_x) - min(size_on_page_x),
+           max(size_on_page_y) - min(size_on_page_y)) > 0.1:
       return False
 
     return True
