@@ -167,6 +167,8 @@ def get_document(path, parent=None, need_secure_path=None):
   doc = Document()
   doc.path = path
 
+  doc.meta['original_path'] = original_path
+
   if os.path.dirname(path):
     doc.meta['directory'] = os.path.dirname(path)
 
