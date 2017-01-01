@@ -8,8 +8,8 @@ git clone https://github.com/pcbje/gransk
 cd ~/gransk
 apt-get update
 apt-get install --force-yes -y \
-      python-dev python-setuptools zlib1g-dev p7zip-full python-pip libicu-dev \
-      poppler-utils ghostscript
+      python-dev python-setuptools zlib1g-dev unzip p7zip-full p7zip-rar \
+      python-pip libicu-dev poppler-utils ghostscript
 pip install -r requirements.txt
 pip install -r utils/dfvfs-requirements.txt
 pip install -U six
