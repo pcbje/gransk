@@ -6,8 +6,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 import logging
 
-from werkzeug import secure_filename
-
+import gransk.core.document as document
 import gransk.core.abstract_subscriber as abstract_subscriber
 import gransk.core.helper as helper
 
@@ -46,7 +45,7 @@ class Subscriber(abstract_subscriber.Subscriber):
     :type payload: ``file``
     """
     new_filename = '%s-%s' % \
-      (doc.docid[0:8], secure_filename(os.path.basename(doc.path)))
+      (doc.docid[0:8], document.secure_path(os.path.basename(doc.path)))
 
     if not os.path.exists(self.root):
       os.makedirs(self.root)

@@ -11,6 +11,7 @@ import re
 from six import text_type as unicode
 
 from werkzeug import secure_filename
+from slugify import slugify
 
 
 class Entities(object):
@@ -158,7 +159,7 @@ def get_document(path, parent=None, need_secure_path=None):
   original_path = path
 
   if need_secure_path:
-    path = secure_filename(path)
+    path = secure_path(path)
 
     if not path:
       path = 'unnamed'
@@ -175,8 +176,8 @@ def get_document(path, parent=None, need_secure_path=None):
 
   doc.docid = digest.hexdigest()
 
-  _, ext = os.path.splitext(original_path)
-  doc.ext = secure_filename(ext.lstrip('.').lower() or 'none')
+  _, ext = os.path.splitext(path)
+  doc.ext = ext.lstrip('.').lower() or 'none'
 
   doc.parent = parent
 
@@ -187,3 +188,23 @@ def get_document(path, parent=None, need_secure_path=None):
 
   doc.added = int(time.time())
   return doc
+
+
+def secure_path(path):
+  dirname = os.path.dirname(path)
+  filename = os.path.basename(path)
+  file_base, file_ext = os.path.splitext(path)
+
+  dirname = secure_filename(slugify(dirname, only_ascii=True))
+  file_base = secure_filename(slugify(file_base, only_ascii=True)) or 'unnamed'
+  file_ext = secure_filename(slugify(file_ext, only_ascii=True))
+
+  if file_ext:
+    filename = '.'.join([file_base, file_ext])
+  else:
+    filename = file_base
+
+  if dirname:
+    return os.path.join(dirname, filename)
+
+  return filename

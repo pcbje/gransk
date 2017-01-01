@@ -13,7 +13,6 @@ from functools import wraps
 import requests
 
 from flask import Flask, Response, request, abort
-from werkzeug import secure_filename
 
 import gransk.api
 import gransk.core.helper as helper
@@ -100,8 +99,8 @@ def delete_data():
 @app.route('/file', methods=['GET'])
 def get_file():
   """Get original file."""
-  filename = secure_filename(request.args['filename'])
-  ext = secure_filename(request.args['ext'])
+  filename = document.secure_path(request.args['filename'])
+  ext = document.secure_path(request.args['ext'])
   mediatype = request.args['mediatype']
 
   root = os.path.join(_globals['gransk'].config[helper.DATA_ROOT], 'files')
@@ -130,7 +129,7 @@ def search():
 @app.route('/picture', methods=['GET'])
 def picture():
   """Get document content as picture."""
-  name = secure_filename(request.args['name'])
+  name = document.secure_path(request.args['name'])
   mediatype = request.args['mediatype']
 
   root = os.path.join(_globals['gransk'].config[helper.DATA_ROOT], 'pictures')
