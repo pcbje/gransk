@@ -60,7 +60,22 @@ class MockHttpConnection(object):
     self.request_headers = headers
 
   def getresponse(self):
-    return BytesIO(self.response_text)
+    return MockHttpResponse(self.response_text)
+
+
+class MockHttpResponse(object):
+
+    def __init__(self, response_data):
+        super(MockHttpResponse, self).__init__()
+        self.stream = BytesIO(response_data)
+        self.status = 200
+        self.reason = 'OK'
+
+    def read(self):
+      return self.stream.read()
+
+    def close(self):
+      self.stream.close()
 
 
 class MockElasticsearchIndex(object):

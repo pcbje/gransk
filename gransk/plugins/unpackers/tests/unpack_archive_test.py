@@ -27,6 +27,7 @@ class UnapckArchiveTest(unittest.TestCase):
     doc = document.get_document(test_helper.get_test_path('two_files.zip'))
 
     doc.docid = '4321'
+    doc.meta['Content-Type'] = 'application/zip'
 
     with open(doc.path, 'rb') as inp:
       detector.consume(doc, inp)
@@ -50,6 +51,7 @@ class UnapckArchiveTest(unittest.TestCase):
     doc = document.get_document(test_helper.get_test_path('password-protected.zip'))
 
     doc.docid = '4321'
+    doc.meta['Content-Type'] = 'application/zip'
 
     with open(doc.path, 'rb') as inp:
       detector.consume(doc, inp)
