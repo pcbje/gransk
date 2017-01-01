@@ -27,9 +27,9 @@ class FileMetaTest(unittest.TestCase):
         helper.INJECTOR: test_helper.MockInjector(response)
     })
 
-    doc = document.get_document(b'mock.txt')
+    doc = document.get_document('mock.txt')
 
-    _file_meta.consume(doc, BytesIO('mock'))
+    _file_meta.consume(doc, BytesIO(b'mock'))
 
     expected = 'picture'
     actual = doc.doctype
