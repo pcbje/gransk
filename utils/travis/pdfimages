@@ -1,0 +1,16 @@
+#!/bin/sh
+
+case $(sha224sum "$2" | cut -d\  -f1) in
+  f0c752ebc4e31ed8fdb83b32211805e905f7650de95ba3be008fc192) cat <<EOF
+page   num  type   width height color comp bpc  enc interp  object ID x-ppi y-ppi size ratio
+--------------------------------------------------------------------------------------------
+   1     0 image    2480  3507  gray    1   8  jpeg   no         5  0   301   301  346K 4.1%
+   2     1 image    2480  3507  gray    1   8  jpeg   no        11  0   301   301  371K 4.4%
+EOF
+;;
+  *) cat <<EOF
+page   num  type   width height color comp bpc  enc interp  object ID x-ppi y-ppi size ratio
+--------------------------------------------------------------------------------------------
+EOF
+;;
+esac
