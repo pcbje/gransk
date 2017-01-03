@@ -122,7 +122,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       return False
 
     try:
-      page_size_x, _, page_size_y, _ = pdf_info['page size'].split(' ')
+      page_size_x, _, page_size_y, _ = pdf_info['page size'].split(' ', 3)
       page_size_x = int(page_size_x) / 72
       page_size_y = int(page_size_y) / 72
     except (KeyError, ValueError):
