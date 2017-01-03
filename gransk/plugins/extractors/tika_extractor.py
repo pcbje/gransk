@@ -121,13 +121,23 @@ class Subscriber(abstract_subscriber.Subscriber):
     if len(set(x['page'] for x in images_info)) != page_count:
       return False
 
-    size_on_page_x = [int(x['width']) / int(x['x-ppi'])
-                      for x in images_info if x['type'] == 'image']
-    size_on_page_y = [int(x['height']) / int(x['y-ppi'])
-                      for x in images_info if x['type'] == 'image']
+    try:
+      page_size_x, _, page_size_y, _ = pdf_info['page size'].split(' ')
+      page_size_x = int(page_size_x) / 72
+      page_size_y = int(page_size_y) / 72
+    except (KeyError, ValueError):
+      return False
 
-    if max(max(size_on_page_x) - min(size_on_page_x),
-           max(size_on_page_y) - min(size_on_page_y)) > 0.1:
+    try:
+      image_size_on_page_x = [int(x['width']) / int(x['x-ppi'])
+                              for x in images_info if x['type'] == 'image']
+      image_size_on_page_y = [int(x['height']) / int(x['y-ppi'])
+                              for x in images_info if x['type'] == 'image']
+    except KeyError:
+      return False
+
+    if max(max([page_size_x - x for x in image_size_on_page_x]),
+           max([page_size_y - y for y in image_size_on_page_y])) > 0.1:
       return False
 
     return True
