@@ -206,6 +206,9 @@ def secure_path(path):
   else:
     filename = file_base
 
+  if len(filename) > 200:
+    filename = '%s__%s' % (filename[:99], filename[-99:])
+
   if dirname:
     return os.path.join(dirname, filename)
 
