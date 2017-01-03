@@ -123,21 +123,28 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     try:
       page_size_x, _, page_size_y, _ = pdf_info['page size'].split(' ', 3)
-      page_size_x = int(page_size_x) / 72
-      page_size_y = int(page_size_y) / 72
+      page_size_x = float(page_size_x) / 72
+      page_size_y = float(page_size_y) / 72
     except (KeyError, ValueError):
       return False
 
+    if page_size_x > page_size_y:
+      page_size_x, page_size_y = page_size_y, page_size_x
+
     try:
-      image_size_on_page_x = [int(x['width']) / int(x['x-ppi'])
-                              for x in images_info if x['type'] == 'image']
-      image_size_on_page_y = [int(x['height']) / int(x['y-ppi'])
-                              for x in images_info if x['type'] == 'image']
+      image_size_x = [int(x['width']) / int(x['x-ppi'])
+                      for x in images_info if x['type'] == 'image']
+      image_size_y = [int(x['height']) / int(x['y-ppi'])
+                      for x in images_info if x['type'] == 'image']
     except KeyError:
       return False
 
-    if max(max([page_size_x - x for x in image_size_on_page_x]),
-           max([page_size_y - y for y in image_size_on_page_y])) > 0.1:
+    for i, (x, y) in enumerate(zip(image_size_x, image_size_y)):
+      image_size_x[i] = min(x, y)
+      image_size_y[i] = max(x, y)
+
+    if max(max([page_size_x - x for x in image_size_x]),
+           max([page_size_y - y for y in image_size_y])) > 0.2:
       return False
 
     return True
