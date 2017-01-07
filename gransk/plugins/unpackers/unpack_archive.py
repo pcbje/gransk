@@ -55,7 +55,8 @@ class Subscriber(abstract_subscriber.Subscriber):
     if not os.path.exists(unpack_to):
       os.makedirs(unpack_to)
 
-    tmp_path = os.path.join(self.tmp_root, '%s-%s.%s' % (self.wid, doc.docid[0:8], doc.ext))
+    tmp_path = os.path.join(self.tmp_root, '%s-%s.%s' %
+      (self.wid, doc.docid[0:8], doc.ext))
 
     if not os.path.exists(self.tmp_root):
       os.makedirs(self.tmp_root)
@@ -65,7 +66,7 @@ class Subscriber(abstract_subscriber.Subscriber):
       out.write(payload.read())
       payload.seek(0)
 
-    cmd = self._get_cmd(tmp_path, unpack_to)
+    cmd = self._get_cmd(tmp_path, unpack_to, doc.meta['Content-Type'])
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate()
@@ -78,7 +79,8 @@ class Subscriber(abstract_subscriber.Subscriber):
         path = os.path.join(folder, filename)
         new_doc = document.get_document(path, parent=doc)
         new_doc.tag = tag
-        with open(path) as file_object:
+
+        with open(path, "rb") as file_object:
           self.produce(helper.EXTRACT_META, new_doc, file_object)
           self.produce(helper.PROCESS_FILE, new_doc, file_object)
           doc.children += 1
@@ -88,5 +90,8 @@ class Subscriber(abstract_subscriber.Subscriber):
 
     shutil.rmtree(unpack_to)
 
-  def _get_cmd(self, path, decompress_to):
-    return ['7z', 'e', '-p%s' % self.password, '-y', '-o%s' % decompress_to, path]
+  def _get_cmd(self, path, decompress_to, mime_type=None):
+    if mime_type == 'application/zip':
+      return ['unzip', '-P', self.password, '-o', '-d', decompress_to, '--', path]
+    else:
+      return ['7z', 'x', '-p%s' % self.password, '-y', '-o%s' % decompress_to, '--', path]

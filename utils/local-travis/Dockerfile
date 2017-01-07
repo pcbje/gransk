@@ -11,7 +11,8 @@ RUN apt-get install --force-yes -y build-essential make curl git
 RUN curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
 RUN apt-get install --force-yes -y \
     python-pip python3.4 python3-pip nodejs python-dev \
-    zlib1g-dev p7zip-full libicu-dev fontconfig rubygems-integration
+    zlib1g-dev unzip p7zip-full p7zip-rar libicu-dev poppler-utils ghostscript \
+    fontconfig rubygems-integration
 
 RUN gem install coveralls-lcov
 

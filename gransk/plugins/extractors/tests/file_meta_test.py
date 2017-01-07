@@ -6,10 +6,7 @@ from __future__ import absolute_import, unicode_literals
 import unittest
 import json
 
-try:
-  from StringIO import StringIO
-except ImportError:
-  from io import StringIO
+from io import BytesIO
 
 import gransk.core.helper as helper
 import gransk.core.tests.test_helper as test_helper
@@ -23,14 +20,16 @@ class FileMetaTest(unittest.TestCase):
     _file_meta = file_meta.Subscriber(test_helper.get_mock_pipeline([]))
     response = json.dumps({'Content-Type': 'image/jpeg'}).encode('utf-8')
     _file_meta.setup({
+        'data_root': 'local_data',
         'code_root': '.',
+        'worker_id': 1,
         'host': 'mock',
         helper.INJECTOR: test_helper.MockInjector(response)
     })
 
     doc = document.get_document('mock.txt')
 
-    _file_meta.consume(doc, StringIO('mock'))
+    _file_meta.consume(doc, BytesIO(b'mock'))
 
     expected = 'picture'
     actual = doc.doctype

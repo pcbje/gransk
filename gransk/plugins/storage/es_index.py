@@ -66,7 +66,7 @@ class Subscriber(abstract_subscriber.Subscriber):
         try:
           self.helper.bulk(self.elastic, bulk)
         except Exception as err:
-          LOGGER.error('es index error: %s', err)
+          LOGGER.exception('es index error: %s', err)
         bulk = []
 
       if stop:
@@ -80,7 +80,7 @@ class Subscriber(abstract_subscriber.Subscriber):
   def create_mapping(self):
     """Create index mappig in Elasticsearch cluster."""
     LOGGER.info(self.elastic.indices.create(index='gransk', ignore=400, body={
-        "settings": {
+        "settings": self.config.get(helper.ES_INDEX, {
             "number_of_shards": 5,
             "analysis": {
                 "analyzer": {
@@ -107,7 +107,7 @@ class Subscriber(abstract_subscriber.Subscriber):
                     }
                 }
             }
-        },
+        }),
         "mappings": {
             "document": {
                 "dynamic": "true",

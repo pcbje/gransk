@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import division, absolute_import, unicode_literals
 
 import os
+import logging
 import subprocess
+from six.moves.urllib.parse import quote as url_quote
 
 import gransk.core.abstract_subscriber as abstract_subscriber
 import gransk.core.helper as helper
@@ -79,19 +81,25 @@ class Subscriber(abstract_subscriber.Subscriber):
       os.remove(tmp_path)
 
     headers = {
-        'Content-Disposition': 'attachment; filename=%s' % filename,
-        'Content-type': content_type,
+      'Content-Disposition': 'attachment; filename=%s' % url_quote(filename),
+      'Content-type': content_type,
     }
 
     if self.ocr_languages:
-        headers['X-Tika-OCRLanguage'] = self.ocr_languages
+      headers['X-Tika-OCRLanguage'] = self.ocr_languages
 
     connection = self.config[helper.INJECTOR].get_http_connection()
     connection.request('PUT', '/tika', data, headers)
     response = connection.getresponse()
-    text = response.read().strip().decode('utf-8')
-    response.close()
-    doc.text = text
+
+    try:
+      if response.status >= 400:
+        logging.error('tika error %d (%s): %s', response.status,
+                      response.reason, doc.path)
+      else:
+        doc.text = response.read().strip().decode('utf-8')
+    finally:
+      response.close()
 
   @classmethod
   def _is_pdf_scanned(cls, path):
@@ -113,8 +121,30 @@ class Subscriber(abstract_subscriber.Subscriber):
     if len(set(x['page'] for x in images_info)) != page_count:
       return False
 
-    if len(set((x['width'], x['height']) for x in images_info
-               if x['type'] == 'image')) != 1:
+    try:
+      page_size_x, _, page_size_y, _ = pdf_info['page size'].split(' ', 3)
+      page_size_x = float(page_size_x) / 72
+      page_size_y = float(page_size_y) / 72
+    except (KeyError, ValueError):
+      return False
+
+    if page_size_x > page_size_y:
+      page_size_x, page_size_y = page_size_y, page_size_x
+
+    try:
+      image_size_x = [int(x['width']) / int(x['x-ppi'])
+                      for x in images_info if x['type'] == 'image']
+      image_size_y = [int(x['height']) / int(x['y-ppi'])
+                      for x in images_info if x['type'] == 'image']
+    except KeyError:
+      return False
+
+    for i, (x, y) in enumerate(zip(image_size_x, image_size_y)):
+      image_size_x[i] = min(x, y)
+      image_size_y[i] = max(x, y)
+
+    if max(max([page_size_x - x for x in image_size_x]),
+           max([page_size_y - y for y in image_size_y])) > 0.2:
       return False
 
     return True

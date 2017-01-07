@@ -7,7 +7,7 @@ python:
   - "2.7"
 
 install:
-  - "sudo apt-get install --force-yes -y python-dev zlib1g-dev p7zip-full libicu-dev fontconfig rubygems-integration poppler-utils ghostscript"
+  - "sudo apt-get install --force-yes -y python-dev zlib1g-dev unzip p7zip-full p7zip-rar libicu-dev fontconfig rubygems-integration poppler-utils ghostscript"
   - "sudo gem install coveralls-lcov"
   - "sudo apt-get remove --purge -y bzip2 libbz2-dev"
   - "pip install -r utils/dfvfs-requirements.txt"
@@ -15,6 +15,10 @@ install:
   - "pip install -r requirements.txt"
   - "python setup.py install"
   - "cp gransk/web/tests/package.json /opt && npm install --prefix=/opt /opt"
+
+before_script:
+  - "chmod +x utils/travis/*"
+  - "export PATH=utils/travis:$PATH"
 
 script:
   - "python run_tests.py"

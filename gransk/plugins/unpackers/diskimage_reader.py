@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
 
-from __future__ import absolute_import, unicode_literals, print_function
+from __future__ import absolute_import, unicode_literals
 
 import logging
 import os
@@ -41,8 +41,8 @@ class Reader(object):
         name = file_entry.name.decode(enc)
 
       full_path = file_system.JoinPath([parent_full_path, name])
-    except Exception as err:
-      print("!", err, name)
+    except Exception:
+      logging.exception("could not extract file entries: %s", name)
       return
 
     if depth < 5:
@@ -71,7 +71,7 @@ class Reader(object):
         volume_system)
 
     if not volume_identifiers:
-      print('[WARNING] No partitions found.')
+      logging.warning('No partitions found.')
       return
 
     return volume_identifiers

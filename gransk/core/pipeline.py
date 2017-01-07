@@ -4,8 +4,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import logging
-import traceback
-import sys
 import inspect
 import os
 from collections import defaultdict
@@ -133,8 +131,7 @@ def init_subscriber(config, subscriber_mod, pipeline):
 
     pipeline.subscribers.append(subscriber)
   except Exception as err:
-    traceback.print_exc(file=sys.stdout)
-    LOGGER.warning('! %s could not be loaded: %s', subscriber_mod, err)
+    LOGGER.exception('! %s could not be loaded: %s', subscriber_mod, err)
 
 
 def build_pipeline(config):

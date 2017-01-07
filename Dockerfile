@@ -12,7 +12,7 @@ WORKDIR /app
 
 RUN apt-get update
 RUN apt-get install --force-yes -y \
-      python-dev python-setuptools zlib1g-dev p7zip-full \
+      python-dev python-setuptools zlib1g-dev unzip p7zip-full p7zip-rar \
       python-pip libicu-dev poppler-utils ghostscript && \
   pip install -r utils/dfvfs-requirements.txt && \
   pip install -r requirements.txt && \

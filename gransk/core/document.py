@@ -10,6 +10,9 @@ import re
 
 from six import text_type as unicode
 
+from werkzeug import secure_filename
+from slugify import slugify
+
 
 class Entities(object):
   """Class for a set of entities found within documents."""
@@ -142,7 +145,7 @@ class Document(object):
     }
 
 
-def get_document(path, parent=None):
+def get_document(path, parent=None, need_secure_path=None):
   """
   Create a new document object from the given path.
 
@@ -150,24 +153,32 @@ def get_document(path, parent=None):
   :param parent: Parent document (e.g. diskimage or archive).
   :returns: ``gransk.core.Document``
   """
-  if isinstance(path, unicode):
-    bpath, upath = path.encode('utf-8'), path
-  else:
-    bpath, upath = path, path.decode('utf-8')
+  if isinstance(path, bytes):
+    path = path.decode('utf-8')
+
+  original_path = path
+
+  if need_secure_path:
+    path = secure_path(path)
+
+    if not path:
+      path = 'unnamed'
 
   doc = Document()
-  doc.path = upath
+  doc.path = path
 
-  if os.path.dirname(doc.path):
-    doc.meta['directory'] = os.path.dirname(doc.path)
+  doc.meta['original_path'] = original_path
+
+  if os.path.dirname(path):
+    doc.meta['directory'] = os.path.dirname(path)
 
   digest = hashlib.md5()
 
-  digest.update(bpath)
+  digest.update(path.encode('utf-8'))
 
   doc.docid = digest.hexdigest()
 
-  _, ext = os.path.splitext(doc.path)
+  _, ext = os.path.splitext(path)
   doc.ext = ext.lstrip('.').lower() or 'none'
 
   doc.parent = parent
@@ -179,3 +190,26 @@ def get_document(path, parent=None):
 
   doc.added = int(time.time())
   return doc
+
+
+def secure_path(path):
+  dirname = os.path.dirname(path)
+  filename = os.path.basename(path)
+  file_base, file_ext = os.path.splitext(path)
+
+  dirname = secure_filename(slugify(dirname, only_ascii=True))
+  file_base = secure_filename(slugify(file_base, only_ascii=True)) or 'unnamed'
+  file_ext = secure_filename(slugify(file_ext, only_ascii=True))
+
+  if file_ext:
+    filename = '.'.join([file_base, file_ext])
+  else:
+    filename = file_base
+
+  if len(filename) > 200:
+    filename = '%s__%s' % (filename[:99], filename[-99:])
+
+  if dirname:
+    return os.path.join(dirname, filename)
+
+  return filename

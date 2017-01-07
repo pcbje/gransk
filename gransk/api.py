@@ -5,13 +5,10 @@ from __future__ import unicode_literals
 
 import requests
 import time
-import json
-import hashlib
 import logging
-import traceback
+import threading
 import yaml
 import os
-import sys
 import shutil
 
 import six.moves.http_client
@@ -70,7 +67,7 @@ class Subscriber(abstract_subscriber.Subscriber):
           return
 
       if not file_object:
-        file_object = open(doc.path)
+        file_object = open(doc.path, "rb")
 
       self.produce(helper.EXTRACT_META, doc, file_object)
       self.produce(helper.PROCESS_FILE, doc, file_object)
@@ -78,8 +75,9 @@ class Subscriber(abstract_subscriber.Subscriber):
       file_object.close()
 
     except Exception as err:
+      LOGGER.exception('could not process %s: %s', doc.path, err)
+      doc.status = 'error'
       doc.meta['gransk_error'] = six.text_type(err)
-      traceback.print_exc(file=sys.stdout)
 
 
 class API(object):
@@ -113,12 +111,18 @@ class API(object):
     self.pipeline = pipeline.build_pipeline(self.config)
     self.entrypoint = Subscriber(self.pipeline)
     self.entrypoint.setup(self.config)
+    self.write_lock = threading.Lock()
 
   def add_file(self, doc, file_object):
-    return self.entrypoint.consume(doc, file_object=file_object)
+    with self.write_lock:
+      return self.entrypoint.consume(doc, file_object=file_object)
 
   def clear_all(self):
     """Clear all processed data."""
+    with self.write_lock:
+      self._clear_all()
+
+  def _clear_all(self):
     try:
         if os.path.exists(self.config[helper.DATA_ROOT]):
           shutil.rmtree(self.config[helper.DATA_ROOT])
@@ -128,7 +132,7 @@ class API(object):
         os.makedirs(os.path.join(self.config[helper.DATA_ROOT], 'archives'))
         os.makedirs(os.path.join(self.config[helper.DATA_ROOT], 'archives', '.tmp'))
     except Exception as err:
-       print (">>", err)
+       LOGGER.error("could not clear data: %s", err)
 
     connection = self.config['injector'].get_http_connection('%s:%s' % (self.config['es_host'][0], 9200))
     connection.request('DELETE', '/gransk', '', {})

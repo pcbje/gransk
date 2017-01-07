@@ -9,13 +9,10 @@ import argparse
 import os
 import logging
 import json
-import shutil
-import time
+from functools import wraps
 import requests
 
-from flask import Flask, Response, render_template, request, abort
-from werkzeug import secure_filename
-import yaml
+from flask import Flask, Response, request, abort
 
 import gransk.api
 import gransk.core.helper as helper
@@ -31,9 +28,6 @@ app = Flask(
     static_url_path='/static',
     static_folder=os.path.join(_root, 'gransk', 'web', 'app'))
 
-
-from functools import wraps
-from flask import request, Response
 
 _globals = {}
 
@@ -83,8 +77,9 @@ def upload():
   _file = request.files.get('file')
 
   doc = document.get_document(
-      secure_filename(_file.filename),
-      parent=document.get_document('root'))
+      _file.filename,
+      parent=document.get_document('root'),
+      need_secure_path=True)
 
   doc.tag = 'upload'
 
@@ -104,8 +99,8 @@ def delete_data():
 @app.route('/file', methods=['GET'])
 def get_file():
   """Get original file."""
-  filename = secure_filename(request.args['filename'])
-  ext = secure_filename(request.args['ext'])
+  filename = document.secure_path(request.args['filename'])
+  ext = document.secure_path(request.args['ext'])
   mediatype = request.args['mediatype']
 
   root = os.path.join(_globals['gransk'].config[helper.DATA_ROOT], 'files')
@@ -116,6 +111,7 @@ def get_file():
 
   with open(file_path, 'rb') as inp:
     return Response(inp.read(), mimetype=mediatype, status=200)
+
 
 @app.route('/search')
 def search():
@@ -133,7 +129,7 @@ def search():
 @app.route('/picture', methods=['GET'])
 def picture():
   """Get document content as picture."""
-  name = secure_filename(request.args['name'])
+  name = document.secure_path(request.args['name'])
   mediatype = request.args['mediatype']
 
   root = os.path.join(_globals['gransk'].config[helper.DATA_ROOT], 'pictures')
@@ -231,5 +227,5 @@ if __name__ == '__main__':
   #context = ('/etc/letsencrypt/live/gransk.com/cert.pem', '/etc/letsencrypt/live/gransk.com/privkey.pem')
   context = None
 
-  app.run(host=args.host, port=args.port, debug=args.debug, threaded=True , ssl_context=context)
+  app.run(host=args.host, port=args.port, debug=args.debug, threaded=True, ssl_context=context)
   _globals['gransk'].pipeline.stop()

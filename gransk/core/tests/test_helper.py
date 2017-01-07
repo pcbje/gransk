@@ -54,12 +54,28 @@ class MockHttpConnection(object):
 
   def __init__(self, response_text):
     self.response_text = response_text
+    self.request_headers = None
 
   def request(self, method, uri, payload, headers):
-    pass
+    self.request_headers = headers
 
   def getresponse(self):
-    return BytesIO(self.response_text)
+    return MockHttpResponse(self.response_text)
+
+
+class MockHttpResponse(object):
+
+    def __init__(self, response_data):
+        super(MockHttpResponse, self).__init__()
+        self.stream = BytesIO(response_data)
+        self.status = 200
+        self.reason = 'OK'
+
+    def read(self):
+      return self.stream.read()
+
+    def close(self):
+      self.stream.close()
 
 
 class MockElasticsearchIndex(object):
@@ -129,7 +145,6 @@ class MockPolyglot(object):
       self.entities.append(MockEntity('I-PER', parts))
 
 
-
 class MockWorker(object):
 
   def __init__(self):
@@ -141,10 +156,11 @@ class MockWorker(object):
     self.called = True
     return []
 
+
 class MockInjector(object):
 
-  def __init__(self, response_text=None, ner_entities=[]):
-    self.response_text = response_text
+  def __init__(self, response_text=b"", ner_entities=[]):
+    self.http_connection = MockHttpConnection(response_text)
     self.elastic = MockElasticsearch()
     self.elastic_helper = MockElasticsearchHelper()
     self.polyglot = MockPolyglot
@@ -158,7 +174,7 @@ class MockInjector(object):
     return self.worker
 
   def get_http_connection(self, url=None):
-    return MockHttpConnection(self.response_text)
+    return self.http_connection
 
   def get_elasticsearch(self):
     return self.elastic
